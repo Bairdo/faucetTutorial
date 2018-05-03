@@ -362,6 +362,7 @@ $ as_ns host1 ping 10.0.1.3
 
 Next we will add a new host to run our BGP service on, connect it to the switch's dataplane and create a virtual link for it to be able to communicate with Faucet.
 ### TODO include picture
+![BGP Routing Namespace Diagram](bgp-routing-ns.svg)
 ```
 create_ns bgphost1 192.168.1.3/24
 ovs-vsctl add-port br1 veth-bgphost1 -- set interface veth-bgphost1 ofport_request=4
