@@ -10,6 +10,9 @@ There are three types of routing we can use.
 This tutorial expands on [installing Faucet for the first time](https://faucet.readthedocs.io/en/latest/tutorials.html).
 See there for how to install and setup Faucet and OVS.
 
+For this tutorial it is a good idea to use a terminal multiplexer (screen, tmux or just multiple terminal sessions), as we will be running multiple applications at the same time.
+# TODO maybe add a prefix to the code block on which terminal it should be executed??
+
 ## Routing between vlans
 Let's start with a single switch connected to two hosts in two different vlans.
 ![vlan routing diagram](vlan-routing.png)
@@ -78,7 +81,7 @@ For this we will setup two Faucet switches with two hosts each
 
 h1 --- sw1 --- sw2 --- h3
 h2 ---/           \--- h4
-![static routing network diagram](./static-routing.png)
+![static routing network diagram](./static-routing.svg)
 Run the cleanup script to remove old namespaces and switches.
 ```bash
 cleanup
@@ -361,9 +364,9 @@ $ as_ns host1 ping 10.0.1.3
 ```
 
 Next we will add a new host to run our BGP service on, connect it to the switch's dataplane and create a virtual link for it to be able to communicate with Faucet.
-### TODO include picture
+
 ![BGP Routing Namespace Diagram](bgp-routing-ns.svg)
-```
+```bash
 create_ns bgphost1 192.168.1.3/24
 ovs-vsctl add-port br1 veth-bgphost1 -- set interface veth-bgphost1 ofport_request=4
 ip link add name veth-bgphost1-0 type veth peer name vethbgpctrl0
@@ -374,7 +377,7 @@ ip link set veth-bgphost1-0 up
 as_ns bgphost1 ip link set vethbgpctrl0 up
 ```
 And repeat for the other side.
-```
+```bash
 create_ns bgphost2 192.168.1.4/24
 ovs-vsctl add-port br2 veth-bgphost2 -- set interface veth-bgphost2 ofport_request=4
 ip link add name veth-bgphost2-0 type veth peer name vethbgpctrl0
