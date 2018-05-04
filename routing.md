@@ -251,6 +251,20 @@ Each switch will therefore be controlled by a separate Faucet.
 
 BGP (and other routing) is provided by a NFV service, here we will use [BIRD](http://bird.network.cz/).
 Other applications such as ExaBGP & Quagga could be used.
+
+If you are NOT using the workshop VM you will need to install BIRD.
+
+To install BIRD:
+```bash
+apt-get install flex bison libncurses5-dev libreadline-dev
+wget ftp://bird.network.cz/pub/bird/bird-1.6.4.tar.gz
+tar -xf bird-1.6.4.tar.gz
+cd bird1.6.4
+ ./configure
+make
+make install
+```
+
 Our dataplane will end up looking like this:
 ![BGP network diagram](bgp-dataplane.svg)
 

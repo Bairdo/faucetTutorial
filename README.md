@@ -1,5 +1,6 @@
 # faucetTutorial
-faucet tutorial
+
+Note: this tutorial is work in progress.
 
 Start with [Installing faucet for the first time](https://faucet.readthedocs.io/en/latest/tutorials.html)
 which brad will be demonstrating in the morning. acls carries directly on from that.
