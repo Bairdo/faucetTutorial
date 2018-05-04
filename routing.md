@@ -15,7 +15,7 @@ For this tutorial it is a good idea to use a terminal multiplexer (screen, tmux 
 
 ## Routing between vlans
 Let's start with a single switch connected to two hosts in two different vlans.
-![vlan routing diagram](vlan-routing.png)
+![vlan routing diagram](vlan-routing.svg)
 ```bash
 create_ns host1 10.0.0.254/24
 create_ns host2 10.0.1.254/24
@@ -254,6 +254,10 @@ Other applications such as ExaBGP & Quagga could be used.
 Our dataplane will end up looking like this:
 ![BGP network diagram](bgp-routing.png)
 
+Note 1:
+When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP config) the Faucet application must be restarted to reload the configuration (not sighup reloaded).
+
+
 First we will remove the routing configuration and separate the two datapath configs into there own files.
 They should look like this.
 
@@ -336,7 +340,7 @@ And stop the system faucet
 sudo systemctl stop faucet
 ```
 
-And now we can start the Faucets
+And now we can start the Faucets (start them in different terminals, we will need to restart them later).
 ```bash
 $ sudo env FAUCET_CONFIG=/home/ubuntu/sw1-faucet.yaml FAUCET_LOG=/var/log/faucet/sw1-faucet.log faucet
 $ sudo env FAUCET_CONFIG=/home/ubuntu/sw2-faucet.yaml FAUCET_LOG=/var/log/faucet/sw2-faucet.log  FAUCET_PROMETHEUS_PORT=9304 faucet --ryu-ofp-tcp-listen-port=6650
@@ -546,7 +550,10 @@ Now restart the Faucets.
 $ sudo env FAUCET_CONFIG=/home/ubuntu/sw1-faucet.yaml FAUCET_LOG=/var/log/faucet/sw1-faucet.log faucet &
 $ sudo env FAUCET_CONFIG=/home/ubuntu/sw2-faucet.yaml FAUCET_LOG=/var/log/faucet/sw2-faucet.log  FAUCET_PROMETHEUS_PORT=9304 faucet --ryu-ofp-tcp-listen-port=6650 &
 ```
+
 and our logs should show us BGP peer router up.
+
+/var/log/faucet/sw1-faucet.log
 ```
 ...
 May 03 11:23:40 faucet INFO     BGP peer router ID 172.16.1.2 AS 64512 up
@@ -554,6 +561,7 @@ May 03 11:23:40 faucet ERROR    BGP nexthop 192.168.1.1 for prefix 10.0.0.0/24 c
 May 03 11:23:40 faucet ERROR    BGP nexthop 172.16.1.2 for prefix 192.168.1.0/24 is not a connected network
 ```
 Now we should be able to ping from host1 to host3.
+
 To confirm we are getting the routes from BGP we can query BIRD:
 ```bash
 $ birdcl -s /var/run/bird2.ctl show route
@@ -564,7 +572,7 @@ BIRD 1.6.4 ready.
                    unreachable [faucet 11:48:05 from 172.16.2.1] (100/-) [i]
                    via 192.168.1.3 on veth0 [fruit 11:38:47] (100) [AS64512i]
 ```
-And we can see 10.0.0.0/24 is coming from fruit.
+And we can see 10.0.0.0/24 is coming from our fruit peer.
 
 
 
@@ -595,7 +603,7 @@ routers:
         vlans: [br1-hosts, br1-peer, br1-host2]
 ```
 
-And change port 2's native VLAN so the final configuration should look like:
+And change port 2's native VLAN, so the final configuration should look like:
 ```yaml
 vlans:
     br1-hosts:
@@ -603,7 +611,6 @@ vlans:
         description: "h1 & h2's vlan"
         faucet_mac: "00:00:00:00:00:11"
         faucet_vips: ["10.0.0.254/24"]
-
     br1-peer:
         vid: 200
         description: "vlan for peering port"
@@ -636,7 +643,6 @@ dps:
                 name: "host1"
                 description: "host1 network namespace"
                 native_vlan: br1-host2
-
             3:
                 name: "host2"
                 description: "host2 network namespace"
