@@ -252,7 +252,7 @@ Each switch will therefore be controlled by a separate Faucet.
 BGP (and other routing) is provided by a NFV service, here we will use [BIRD](http://bird.network.cz/).
 Other applications such as ExaBGP & Quagga could be used.
 Our dataplane will end up looking like this:
-![BGP network diagram](bgp-routing.png)
+![BGP network diagram](bgp-dataplane.svg)
 
 Note 1:
 When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP config) the Faucet application must be restarted to reload the configuration (not sighup reloaded).
@@ -335,7 +335,7 @@ Before we start the Faucets, we will need to change the OpenFlow port for sw2 to
 ```bash
 sudo ovs-vsctl set-controller br2 tcp:127.0.0.1:6650
 ```
-And stop the system faucet
+And stop the system Faucet
 ```bsah
 sudo systemctl stop faucet
 ```
@@ -392,7 +392,7 @@ ip link set veth-bgphost2-0 up
 as_ns bgphost2 ip link set vethbgpctrl0 up
 ```
 
-Now bgphost1 should be able to ping 172.16.1.1 & bgphost2 172.16.2.1
+Now bgphost1 should be able to ping 172.16.1.1 & bgphost2 should be able to ping 172.16.2.1
 ```bash
 $ as_ns bgphost1 ping 172.16.1.1
 ```

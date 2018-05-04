@@ -56,14 +56,14 @@
 			<title>Sheet.6</title>
 			<g id="shape7-10" v:mID="7" v:groupContext="shape">
 				<title>Box</title>
-				<desc>host1 namespace</desc>
+				<desc>host2 namespace</desc>
 				<v:userDefs>
 					<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 				</v:userDefs>
 				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="2"/>
 				<v:textRect cx="68.6283" cy="280.938" width="137.26" height="117.862"/>
 				<rect x="0" y="222.007" width="137.257" height="117.862" class="st4"/>
-				<text x="4" y="332.27" class="st5" v:langID="1033"><v:paragraph/><v:tabList/>host1 namespace</text>			</g>
+				<text x="4" y="332.27" class="st5" v:langID="1033"><v:paragraph/><v:tabList/>host2 namespace</text>			</g>
 		</g>
 		<g id="shape11-13" v:mID="11" v:groupContext="shape" v:layerMember="0" transform="translate(271.649,-135.982)">
 			<title>Dynamic connector</title>
