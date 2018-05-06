@@ -66,8 +66,8 @@ sudo pkill -HUP -f faucet.faucet
 ```
 Add the default route to the 'faucet_vips' as above.
 ```bash
-as_ns host1 ip route add default via 10.0.0.254 veth0
-as_ns host2 ip route add default via 10.0.1.254 veth0
+as_ns host1 ip route add default via 10.0.0.254 dev veth0
+as_ns host2 ip route add default via 10.0.1.254 dev veth0
 ```
 Then make some traffic between our two hosts.
 ```bash
