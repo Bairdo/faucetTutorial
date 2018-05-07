@@ -10,8 +10,7 @@ Prerequisites:
 - Useful Bash Functions (create_ns, as_ns, cleanup)
 
 
-Note:
-tcpdump is used to capture packets, sometimes it may be nescessary to exit tcpdump (ctrl + c) before packet output is shown.
+.. note:: tcpdump is used to capture packets, sometimes it may be nescessary to exit tcpdump (ctrl + c) before packet output is shown.
 unless stated tcpdump will be used with ping and it should only be nescassry to run both for ~10 seconds.
 
 
