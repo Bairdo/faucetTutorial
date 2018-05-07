@@ -10,9 +10,6 @@ There are three types of routing we can use.
 This tutorial expands on [installing Faucet for the first time](https://faucet.readthedocs.io/en/latest/tutorials.html).
 See there for how to install and setup Faucet and OVS.
 
-For this tutorial it is a good idea to use a terminal multiplexer (screen, tmux or just multiple terminal sessions), as we will be running multiple applications at the same time.
-# TODO maybe add a prefix to the code block on which terminal it should be executed??
-
 ## Routing between vlans
 Let's start with a single switch connected to two hosts in two different vlans.
 ![vlan routing diagram](vlan-routing.svg)
@@ -196,18 +193,14 @@ For this section we are going to change our static routes from above into BGP ro
 
 BGP (and other routing) is provided by a NFV service, here we will use [BIRD](http://bird.network.cz/).
 Other applications such as ExaBGP & Quagga could be used.
+Faucet imports all routes provided by this NVF service.
+This means we can use our service for other routing protocols (OSPF, RIP, etc) and apply filtering using the serivce's policy langague.
 
 If you are NOT using the workshop VM you will need to install BIRD.
 
 To install BIRD:
 ```bash
-apt-get install flex bison libncurses5-dev libreadline-dev make
-wget ftp://bird.network.cz/pub/bird/bird-1.6.4.tar.gz
-tar -xf bird-1.6.4.tar.gz
-cd bird-1.6.4
-./configure
-make
-make install
+apt-get install bird
 ```
 
 Our dataplane will end up looking like this:
@@ -257,7 +250,7 @@ dps:
                 native_vlan: br1-gw
 ```
 
-Reload facuet
+Reload Faucet
 ```
 TODO does sighup work here?
 ```
@@ -268,7 +261,7 @@ as_ns host1 ping 10.0.0.2
 as_ns host1 ping 10.0.1.3
 ```
 
-Next we will add faucet to our switch's dataplane so that it can communicate with the BGP speaking hostgw.
+Next we will add Faucet to our switch's dataplane so that it can communicate with the BGP speaking hostgw.
 
 ![BGP Routing Namespace Diagram](bgp-routing-ns.svg)
 ```bash
@@ -278,8 +271,8 @@ ip addr add 10.0.1.2/24 dev veth-faucet0
 ```
 
 
-To configure BIRD1
-Create bird1.conf on $HOME
+To configure BIRD
+/etc/bird.conf
 ```
 protocol kernel {
     scan time 60;
@@ -291,31 +284,24 @@ protocol device {
 }
 
 protocol static {
-    route 10.0.0.0/24 via 192.168.1.1;
-    route 192.168.1.0/24 unreachable;
+    route 10.0.0.0/24 via 10.0.1.254;
 }
 
 protocol bgp faucet {
-    local as 64512;
-    neighbor 172.16.1.1 port 9179 as 64512;
-    export all;
-    import all;
-}
-
-protocol bgp kiwi {
-    local as 64512;
-    neighbor 192.168.1.4 port 179 as 64513;
+    local as 64513;
+    neighbor 10.0.1.4 port 9179 as 64512;
     export all;
     import all;
 }
 ```
 
-Start the two BIRDs
+Start BIRD
 ```bash
-$ as_ns bgphost1 bird -s /var/run/bird1.ctl -c $HOME/bird1.conf
+$ as_ns hostgw bird
 ```
 
-We'll configure the Faucets by adding the BGP configuration to the \*-peer VLAN.
+We'll configure Faucet by adding the BGP configuration to the br1-gw VLAN.
+
 /etc/faucet/faucet.yaml
 ```yaml
 vlans:
@@ -332,18 +318,20 @@ vlans:
         faucet_vips: ["10.0.1.254/24"]
         bgp_port: 9179
         bgp_as: 64512
-        bgp_routerid: '172.16.1.1'
-        bgp_neighbor_addresses: ['172.16.1.2', '::1']
+        bgp_routerid: '10.0.1.2'
+        bgp_neighbor_addresses: ['10.0.1.3']
         bgp_connect_mode: active
-        bgp_neighbor_as: 64512
+        bgp_neighbor_as: 64513
+
 
 routers:
     br1-router:
         vlans: [br1-hosts, br1-gw]
 ```
 
-And finally add the port configuration for the bgphost.
-sw1-facuet.yaml
+And finally add the port configuration for the Faucet dataplane interface (veth-faucet0).
+
+/etc/faucet/facuet.yaml
 ```yaml
 dps:
     br1:
@@ -351,10 +339,13 @@ dps:
         interfaces:
             ...
             4:
-                native_vlan: br1-peer
+                name: "faucet-dataplane"
+                description: "faucet's dataplane connection for bgp"
+                native_vlan: br1-gw
 
 ```
-Now restart the Faucets.
+
+Now restart Faucet.
 ```bash
 sudo systemctl restart faucet
 ```
@@ -364,123 +355,15 @@ and our logs should show us BGP peer router up.
 /var/log/faucet/faucet.log
 ```
 ...
-May 03 11:23:40 faucet INFO     BGP peer router ID 172.16.1.2 AS 64512 up
-May 03 11:23:40 faucet ERROR    BGP nexthop 192.168.1.1 for prefix 10.0.0.0/24 cannot be us
-May 03 11:23:40 faucet ERROR    BGP nexthop 172.16.1.2 for prefix 192.168.1.0/24 is not a connected network
+May 04 19:17:55 faucet INFO     BGP peer router ID 10.0.1.3 AS 64513 up
+May 04 19:17:55 faucet ERROR    BGP nexthop 10.0.1.254 for prefix 10.0.0.0/24 cannot be us
+May 04 19:17:55 faucet INFO     BGP add 192.168.1.0/24 nexthop 10.0.1.3
 ```
 Now we should be able to ping from host1 to hostgw.
 
-To confirm we are getting the routes from BGP we can query BIRD:
 ```bash
-birdcl -s /var/run/bird2.ctl show route
-BIRD 1.6.4 ready.
-10.0.0.0/24        via 192.168.1.1 on veth0 [fruit 11:38:47 from 192.168.1.3] * (100) [AS64512i]
-10.0.1.0/24        via 192.168.1.2 on veth0 [static1 11:31:29] * (200)
-192.168.1.0/24     unreachable [static1 11:31:29] * (200)
-                   unreachable [faucet 11:48:05 from 172.16.2.1] (100/-) [i]
-                   via 192.168.1.3 on veth0 [fruit 11:38:47] (100) [AS64512i]
-```
-And we can see 10.0.0.0/24 is coming from our fruit peer.
-
-
-# TODO how will we do this part with the updated bgp part above?
-Next we will move host2 into a different subnet and add a route for it to be advertised via BGP.
-
-Remove the old 10.0.0.0/24 IP address and add the new one.
-
-```bash
-as_ns host2 ip addr flush dev veth0
-as_ns host2 ip addr add 10.0.2.2/24 dev veth0
-as_ns host2 ip route add default via 10.0.2.254
-```
-
-And configure Faucet to put host 2 in a new VLAN.
-```yaml
-vlans:
-    ...
-    br1-host2:
-        vid: 300
-        faucet_mac: "00:00:00:00:00:34"
-        faucet_vips: ["10.0.2.254/24"]
-```
-
-Add the VLAN to the Inter VLAN router:
-```yaml
-routers:
-    router-br1:
-        vlans: [br1-hosts, br1-peer, br1-host2]
-```
-
-And change port 2's native VLAN, so the final configuration should look like:
-```yaml
-vlans:
-    br1-hosts:
-        vid: 100
-        description: "h1 & h2's vlan"
-        faucet_mac: "00:00:00:00:00:11"
-        faucet_vips: ["10.0.0.254/24"]
-    br1-peer:
-        vid: 200
-        description: "vlan for peering port"
-        faucet_mac: "00:00:00:00:00:22"
-        faucet_vips: ["192.168.1.1/24"]
-        bgp_port: 9179
-        bgp_as: 64512
-        bgp_routerid: '172.16.1.1'
-        bgp_neighbor_addresses: ['172.16.1.2', '::1']
-        bgp_connect_mode: active
-        bgp_neighbor_as: 64512
-    br1-host2:
-        vid: 300
-        faucet_mac: "00:00:00:00:00:34"
-        faucet_vips: ["10.0.2.1/24"]
-
-routers:
-    router-br1:
-        vlans: [br1-hosts, br1-peer, br1-host2]
-dps:
-    br1:
-        dp_id: 0x1
-        hardware: "Open vSwitch"
-        interfaces:
-            1:
-                name: "br2"
-                description: "connects to br2"
-                native_vlan: br1-peer
-            2:
-                name: "host1"
-                description: "host1 network namespace"
-                native_vlan: br1-host2
-            3:
-                name: "host2"
-                description: "host2 network namespace"
-                native_vlan: br1-hosts
-```
-
-Restart Faucet 1 to reload our config and host2 should be able to ping host1, but not host3 & host4.
-
-We need to advertise our new 10.0.2.0/24 via bgp.
-So in the 'protocol static' section of bird1.conf add the new route.
-```
-protocol static {
-    route 10.0.0.0/24 via 192.168.1.1;
-    route 10.0.2.0/24 via 192.168.1.1
-    route 192.168.1.0/24 unreachable;
-}
-```
-reload bird:
-```bash
-$ sudo birdcl configure
-```
-
-And in bird2 we can view the routing table
-```bash
-$ sudo birdcl -s /var/run/bird2.ctl show route
-BIRD 1.6.4 ready.
-10.0.2.0/24        via 192.168.1.1 on veth0 [fruit 12:04:36 from 192.168.1.3] * (100) [AS64512i]
-10.0.0.0/24        via 192.168.1.1 on veth0 [fruit 11:38:47 from 192.168.1.3] * (100) [AS64512i]
-10.0.1.0/24        via 192.168.1.2 on veth0 [static1 11:31:29] * (200)
-192.168.1.0/24     unreachable [static1 11:31:29] * (200)
-                   unreachable [faucet 11:48:05 from 172.16.2.1] (100/-) [i]
-                   via 192.168.1.3 on veth0 [fruit 11:38:47] (100) [AS64512i]
+as_ns host1 ping 10.0.1.3
+PING 10.0.1.3 (10.0.1.3) 56(84) bytes of data.
+64 bytes from 10.0.1.3: icmp_seq=3 ttl=63 time=0.404 ms
+64 bytes from 10.0.1.3: icmp_seq=4 ttl=63 time=0.128 ms
 ```

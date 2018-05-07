@@ -10,6 +10,7 @@ Then:
 2. [VLANs](vlan_tutorial.md)
 3. [Routing](routing.md)
 4. [NFV services](services.md)
+5. [Routing 2](routing-2.rst)
 
 
 If comfortable with the above topics [Build your own network](byon.md)
