@@ -5,8 +5,11 @@ Next we are going to introduce VLANs.
 
 ETA: ~30 mins.
 
+
+^^
+
 Prerequisites:
-^^^^^^^^^^^^^^
+--------------
 
 - Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`_
 - OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`_
@@ -63,7 +66,7 @@ In addition to the bash scripts in the prerequisite section we will use the foll
     }
 
 Network setup
-^^^^^^^^^^^^^
+-------------
 
 Let’s start. Keep host1, host2 on the native vlan 100 (office vlan) as in the first tutorial.
 Then add the following hosts with the corresponding vlan:
