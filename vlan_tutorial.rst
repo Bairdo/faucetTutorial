@@ -34,6 +34,7 @@ To demonistrate these tasks we will use a demo network where a single switch br0
 - Tagged vlan100, vlan200, vlan300: host9 (veth0.100: 192.168.0.9/24,veth0.200: 192.168.2.9/24, veth0.300: 192.168.3.9/24).
 
 Here is the structure of the demo setup.
+
 .. image:: faucetVLANTutorial.png
     :alt: Demo network setup
     :align: center
