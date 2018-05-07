@@ -16,16 +16,17 @@ unless stated tcpdump will be used with ping and it should only be nescassry to 
 
 
 First we will add two new hosts to our network:
-.. code:: console
+.. code-block:: console
 
     create_ns host3 192.168.0.3/24
     create_ns host4 192.168.0.4/24
 
 and connect them to br0
 
-.. code:: console
+.. code-block:: console
 
-    sudo ovs-vsctl add-port br0 veth-host3 -- set interface veth-host3 ofport_request=3 -- add-port br0 veth-host4 -- set interface veth-host4 ofport_request=4
+    sudo ovs-vsctl add-port br0 veth-host3 -- set interface veth-host3 ofport_request=3 \
+    -- add-port br0 veth-host4 -- set interface veth-host4 ofport_request=4
 
 
 The configurtaion below will block ICMP on traffic coming in on port 3, and allow everything else.
@@ -80,12 +81,12 @@ The 'allow' action is a boolean, if it's True allow the packet to continue throu
 Now tell Faucet to reload its configuration, this can be done be restarting the application.
 But a better way is to send Faucet a SIGHUP signal.
 
-.. code:: console
+.. code-block:: console
 
     check_faucet_config /etc/faucet/faucet.yaml
 
 
-.. code:: console
+.. code-block:: console
 
     pkill -HUP -f faucet.faucet
 
@@ -94,7 +95,7 @@ Now pings to/from host3 should fail, but the other three hosts should be fine.
 
 Test this with
 
-.. code:: console
+.. code-block:: console
 
     as_ns host1 ping 192.168.0.3
     as_ns host1 ping 192.168.0.4
@@ -134,13 +135,13 @@ And again send the sighup signal to Faucet
 To check this we will ping from host1 to host3, while performing a tcpdump on host4 who should receive the ping replies.
 It is a good idea to run each from a different terminal (screen, tmux, ...)
 
-.. code:: console
+.. code-block:: console
 
     as_ns host1 ping 192.168.0.3
 
 Ping should have 100% packet loss.
 
-.. code:: console
+.. code-block:: console
 
     as_ns host4 tcpdump -e -n -i veth0
 
@@ -221,6 +222,7 @@ ping host1 from host2
 
 Here we can see ICMP echo requests are coming from the MAC address "00:00:00:00:00:02" that we set in our output ACL.
 (The reply is destined to the actual MAC address of host2 thanks to ARP) [TODO i think].
+
 .. code-block:: console
 
     tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
@@ -263,6 +265,7 @@ To do this we will use both the 'port' & 'vlan_vid' output fields.
 
 Again reload Faucet, start a tcpdump on host4, and ping from host1 to host3.
 Ping should still not be allowed through and the TCPDump output should be similar to below (Note the 802.1Q tag and vlan 3):
+
 .. code:: console
 
     $ as_ns host4 tcpdump -e -n -i veth0
