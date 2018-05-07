@@ -7,8 +7,11 @@ There are three types of routing we can use.
 - Static routing
 - BGP via an external application (Quagga, Bird, EXABGP, ...)
 
-This tutorial expands on [installing Faucet for the first time](https://faucet.readthedocs.io/en/latest/tutorials.html).
-See there for how to install and setup Faucet and OVS.
+Prerequisites:
+- Faucet [Steps 1 & 2](https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation)
+- OpenVSwitch [Steps 1 & 2](https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath)
+- Useful Bash Functions (create_ns, as_ns, cleanup)
+
 
 ## Routing between vlans
 Let's start with a single switch connected to two hosts in two different vlans.
@@ -59,14 +62,14 @@ dps:
 ```
 Send SIGHUP signal to reload the configuration file.
 ```
-sudo pkill -HUP -f faucet.faucet
+sudo pkill -HUP -f "faucet\.faucet"
 ```
 Add the default route to the 'faucet_vips' as above.
 ```bash
 as_ns host1 ip route add default via 10.0.0.254 dev veth0
 as_ns host2 ip route add default via 10.0.1.254 dev veth0
 ```
-Then make some traffic between our two hosts.
+Then generate some traffic between our two hosts.
 ```bash
 as_ns host1 ping 10.0.1.2
 ```
@@ -188,13 +191,13 @@ PING 10.0.1.3 (10.0.1.3) 56(84) bytes of data.
 
 ## BGP Routing
 
-# TODO This section is being updated and does not work.
 For this section we are going to change our static routes from above into BGP routes.
 
 BGP (and other routing) is provided by a NFV service, here we will use [BIRD](http://bird.network.cz/).
 Other applications such as ExaBGP & Quagga could be used.
 Faucet imports all routes provided by this NVF service.
 This means we can use our service for other routing protocols (OSPF, RIP, etc) and apply filtering using the serivce's policy langague.
+See [routing-2](routing-2.rst) for more advanced BGP route filtering.
 
 If you are NOT using the workshop VM you will need to install BIRD.
 
@@ -283,10 +286,14 @@ protocol device {
     scan time 60;
 }
 
+# Local
+# TODO is this right?
 protocol static {
     route 10.0.0.0/24 via 10.0.1.254;
 }
 
+# Faucet bgp peer config.
+# Will import all routes available, including the static ones above.
 protocol bgp faucet {
     local as 64513;
     neighbor 10.0.1.4 port 9179 as 64512;
@@ -323,7 +330,6 @@ vlans:
         bgp_connect_mode: active
         bgp_neighbor_as: 64513
 
-
 routers:
     br1-router:
         vlans: [br1-hosts, br1-gw]
@@ -350,7 +356,7 @@ Now restart Faucet.
 sudo systemctl restart faucet
 ```
 
-and our logs should show us BGP peer router up.
+and our logs should show us 'BGP peer router *** up'.
 
 /var/log/faucet/faucet.log
 ```
@@ -367,3 +373,5 @@ PING 10.0.1.3 (10.0.1.3) 56(84) bytes of data.
 64 bytes from 10.0.1.3: icmp_seq=3 ttl=63 time=0.404 ms
 64 bytes from 10.0.1.3: icmp_seq=4 ttl=63 time=0.128 ms
 ```
+
+For more advanced routing including BGP route policy filtering see [routing 2 tutorial](routing-2.rst).
