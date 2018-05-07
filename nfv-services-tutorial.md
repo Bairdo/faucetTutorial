@@ -38,7 +38,7 @@ We will run install dnsmasq and run DHCP service on host2
 ```
 sudo apt-get install dnsmasq
 
-sudo ip netns exec host2 dnsmasq --no-ping -p 0 -k  \
+as_ns host2 dnsmasq --no-ping -p 0 -k  \
                                  --dhcp-range=192.168.0.10,192.168.0.20  \
                                  --dhcp-option=option:router,192.168.0.3 -O option:dns-server,8.8.8.8  \
                                  -I lo -z -l /tmp/nfv-dhcp.leases -8 /tmp/nfv.dhcp.log -i veth0  --conf-file= &               
