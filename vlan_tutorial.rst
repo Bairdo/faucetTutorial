@@ -1,8 +1,12 @@
+VLAN tutorial
+=============
+
 Next we are going to introduce VLANs.
 
 ETA: ~30 mins.
 
 Prerequisites:
+--------------
 
 - Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`_
 - OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`_
@@ -38,7 +42,7 @@ In addition to the bash scripts in the prerequisite section we will use the foll
 - to add a tagged network interface to a host namespaces
 - delete hosts
 
-.. code:: console
+.. code:: bash
 
     add_tagged_dev_ns () {
          NETNS=$1
@@ -56,7 +60,9 @@ In addition to the bash scripts in the prerequisite section we will use the foll
        sudo ovs-vsctl  del-port br0 veth-${NETNS}
     }
 
-### Network setup
+Network setup
+^^^^^^^^^^^^^
+
 Let’s start. Keep host1, host2 on the native vlan 100 (office vlan) as in the first tutorial.
 Then add the following hosts with the corresponding vlan:
 
@@ -64,7 +70,8 @@ Then add the following hosts with the corresponding vlan:
 - In native vlan 200 add host5 and host6 (no need to add any vlan interface for hosts connected to native vlan).
 - In tagged vlan 300 add host7 and host8,  and create a vlan interface on each of them.
 - Add host9 to all previous vlans to work as NFV host .
-Let's start..
+
+Let's start.
 
 Tagged vlan 100
 
@@ -115,10 +122,12 @@ Then  connect all the hosts to the switch (br0)
 Now we have everything to start working with faucet through its configuration file.
 Each time we need only to change the configuration file and restart faucet (or send it HUP signal to relaod the configuration file).
 
-## Basic vlan settings
+Basic vlan settings
+-------------------
+
 Change /etc/faucet/faucet.yaml to reflect our setting.
 
-..code-block:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
@@ -215,7 +224,9 @@ Let's set host5 ip back.
 All these traffic should go through to the host9 as it is connected through trunk link.
 
 
-## Vlan ACL
+Vlan ACL
+--------
+
 Let's apply ACL on a particular vlan (e.g. vlan300). We will block any ICMP packets on Vlan300.
 First create an ACL to block the ping.
 Open /etc/faucet/faucet.yaml and add acls.
