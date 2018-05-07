@@ -1,4 +1,4 @@
-VLAN tutorial
+VLAN Tutorial
 =============
 
 Next we are going to introduce VLANs.
@@ -6,22 +6,24 @@ Next we are going to introduce VLANs.
 ETA: ~30 mins.
 
 Prerequisites:
---------------
+^^^^^^^^^^^^^^
 
 - Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`_
 - OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`_
 - Useful Bash Functions (create_ns, as_ns, cleanup)
 
 
-In this tutorial we will look how to do the following tasks using faucet:
+In this tutorial we will look at how to do the following tasks using Faucet:
 
 - Native VLAN.
 - Mixed VLANS (native and tagged).
-- Trunk link
+- Trunk links.
 - ACL for a particular VLAN.
 
-
 .. note:: You can find routing between VLANs `here <./routing.html>`_
+
+Configuring VLANs:
+^^^^^^^^^^^^^^^^^^
 
 To demonistrate these tasks we will use a demo network where a single switch br0 connects to:
 
