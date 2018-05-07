@@ -5,11 +5,8 @@ Next we are going to introduce VLANs.
 
 ETA: ~30 mins.
 
-
-^^
-
 Prerequisites:
---------------
+^^^^^^^^^^^^^^
 
 - Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`_
 - OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`_
@@ -37,7 +34,9 @@ To demonistrate these tasks we will use a demo network where a single switch br0
 - Tagged vlan100, vlan200, vlan300: host9 (veth0.100: 192.168.0.9/24,veth0.200: 192.168.2.9/24, veth0.300: 192.168.3.9/24).
 
 Here is the structure of the demo setup.
-![alt text](./faucetVLANTutorial.png "Demo network setup")
+.. image:: ./faucetVLANTutorial.png
+    :alt: Demo network setup
+    :align: center
 
 .. note:: Keep a piece of paper with the network layout and hosts' names, vlans, IPs to simplify following the rest of the tutorial.
 
@@ -185,6 +184,7 @@ Send SIGHUP singnal to reload the configuration file, and check how its log the 
     cat /var/log/faucet/faucet.log
 
 Let's do the following simple tests:
+
 1. ping between hosts in the same vlan
 
 .. code-block:: console
