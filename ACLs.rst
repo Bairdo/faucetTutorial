@@ -16,6 +16,7 @@ unless stated tcpdump will be used with ping and it should only be nescassry to 
 
 
 First we will add two new hosts to our network:
+
 .. code-block:: console
 
     create_ns host3 192.168.0.3/24
@@ -108,6 +109,7 @@ To do this Faucet provides two ACL actions: mirror & output.
 The mirror action copies the packet, before any modifications, to the specified port (NOTE: mirroring is done in input direction only).
 
 Let's add the mirror action to our block-ping ACL /etc/faucet/faucet.yaml
+
 .. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
@@ -127,6 +129,7 @@ Let's add the mirror action to our block-ping ACL /etc/faucet/faucet.yaml
                 mirror: 4
 
 And again send the sighup signal to Faucet
+
 .. code:: console
 
     pkill -HUP -f faucet.faucet
@@ -211,11 +214,13 @@ Let's create a new ACL for host2's port that will change the MAC source address.
 again reload Faucet.
 
 Start tcpdump on host1
+
 .. code:: console
 
     as_ns host1 tcpdump -e -n -i veth0
 
 ping host1 from host2
+
 .. code:: console
 
     as_ns host2 ping 192.168.0.1
