@@ -34,7 +34,7 @@ To demonistrate these tasks we will use a demo network where a single switch br0
 - Tagged vlan100, vlan200, vlan300: host9 (veth0.100: 192.168.0.9/24,veth0.200: 192.168.2.9/24, veth0.300: 192.168.3.9/24).
 
 Here is the structure of the demo setup.
-.. image:: ./faucetVLANTutorial.png
+.. image:: faucetVLANTutorial.png
     :alt: Demo network setup
     :align: center
 
@@ -185,7 +185,7 @@ Send SIGHUP singnal to reload the configuration file, and check how its log the 
 
 Let's do the following simple tests:
 
-1. ping between hosts in the same vlan
+1. Ping between hosts in the same vlan
 
 .. code-block:: console
 
@@ -196,14 +196,13 @@ Let's do the following simple tests:
 
 All should work.
 
-2. ping between hosts in same mixed vlan (i.e. native and tagged). In particular between host1 (native vlan100) to host3 (tagged vlan100).
+2. Ping between hosts in the same vlan where the port's vlan mode is both native and tagged. In particular between host1 (native vlan100) to host3 (tagged vlan100).
 
 .. code-block:: console
 
     as_ns host1 ping 192.168.0.3
 
-3. ping between hosts in different vlans.
-let's change host5 (native vlan200) ip to be 192.168.0.5 and try to ping it from host1 (native vlan100).
+3. Ping between hosts in different vlans. Let's change host5 (native vlan200) ip to be 192.168.0.5 and try to ping it from host1 (native vlan100).
 
 .. code-block:: console
 
@@ -211,7 +210,7 @@ let's change host5 (native vlan200) ip to be 192.168.0.5 and try to ping it from
     as_ns host1 ping 192.168.0.5
 
 It will not ping as they are in different vlans.
-Let's set host5 ip back.
+Let's set host5's IP back.
 
 .. code-block:: console
 
@@ -226,15 +225,15 @@ Let's set host5 ip back.
     as_ns host5 ping 192.168.2.9
     as_ns host7 ping 192.168.3.9
 
-All these traffic should go through to the host9 as it is connected through trunk link.
+All of this traffic should go through to host9 as it is connected through the trunk link.
 
 
 Vlan ACL
 --------
 
-Let's apply ACL on a particular vlan (e.g. vlan300). We will block any ICMP packets on Vlan300.
+Let's apply an ACL on a particular vlan (e.g. vlan300). We will block any ICMP packets on Vlan300.
 First create an ACL to block the ping.
-Open /etc/faucet/faucet.yaml and add acls.
+Open /etc/faucet/faucet.yaml and add the 'acls' section.
 
 .. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
