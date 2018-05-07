@@ -37,14 +37,14 @@ Lets add the routers and vlans section like so.
 vlans:
     vlan100:
         vid: 100
-        faucet_vips: ["10.0.0.254/24"]
+        faucet_vips: ["10.0.0.254/24"]  # Faucet's virtual IP address for vlan100
     vlan200:
         vid: 200
-        faucet_vips: ["10.0.1.254/24"]
+        faucet_vips: ["10.0.1.254/24"]  # Faucet's virtual IP address for vlan200
 
 routers:
-    router-1:
-        vlans: [vlan100, vlan200]
+    router-1:                           # Router name
+        vlans: [vlan100, vlan200]       # names of vlans to allow routing between.
 
 dps:
     sw1:
@@ -323,12 +323,12 @@ vlans:
         description: "vlan for peering port"
         faucet_mac: "00:00:00:00:00:22"
         faucet_vips: ["10.0.1.254/24"]
-        bgp_port: 9179
-        bgp_as: 64512
-        bgp_routerid: '10.0.1.2'
-        bgp_neighbor_addresses: ['10.0.1.3']
-        bgp_connect_mode: active
-        bgp_neighbor_as: 64513
+        bgp_port: 9179                          # BGP port for Faucet to listen on.
+        bgp_as: 64512                           # Faucet's AS number
+        bgp_routerid: '10.0.1.2'                # Faucet's Unique ID.
+        bgp_neighbor_addresses: ['10.0.1.3']    # Neighbouring IP addresses (IPv4/IPv6)
+        bgp_connect_mode: active                #
+        bgp_neighbor_as: 64513                  # Neighbour's AS number
 
 routers:
     br1-router:
