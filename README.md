@@ -2,7 +2,10 @@
 
 Note: this tutorial is work in progress.
 
-Eventually this repositry will be moved into the faucet docs website where the rst files will be compiled to html.
+The below section links should display everything correctly.
+BUT --->
+
+Eventually this repository will be moved into the faucet docs website where the rst files will be compiled to html.
 So some of the yaml code blocks are not rendered while viewing on github.
 As a temporary workaround view the rst as a 'raw'.
 
@@ -11,11 +14,11 @@ Start with [Installing faucet for the first time](https://faucet.readthedocs.io/
 which brad will be demonstrating in the morning. acls carries directly on from that.
 
 Then:
-1. [ACLs](ACLs.rst)
-2. [VLANs](vlan_tutorial.rst)
-3. [Routing](routing.rst)
-4. [NFV services](nfv-services-tutorial.rst)
-5. [Routing 2](routing-2.rst)
+1. [ACLs](_build/html/ACLs.html)
+2. [VLANs](_build/html/vlan_tutorial.html)
+3. [Routing](_build/html/routing.html)
+4. [NFV services](_build/html/nfv-services-tutorial.html)
+5. [Routing 2](_build/html/routing-2.html)
 
 
 If comfortable with the above topics [Build your own network](byon.rst)
