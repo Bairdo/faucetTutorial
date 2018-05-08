@@ -37,7 +37,7 @@ And connect them to br0
 The configuration below will block ICMP on traffic coming in on port 3, and allow everything else.
 Add this to /etc/faucet/faucet.yaml below the 'dps'.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
                 3:
@@ -115,7 +115,7 @@ The mirror action copies the packet, before any modifications, to the specified 
 
 Let's add the mirror action to our block-ping ACL /etc/faucet/faucet.yaml
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     ...
@@ -168,7 +168,7 @@ Ping should have 100% packet loss.
 
 There is also the 'output' action which can be used to achieve the same thing.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     block-ping:
@@ -252,7 +252,7 @@ Here we can see ICMP echo requests are coming from the MAC address "00:00:00:00:
 With the output action we could also use it to mirror traffic to a NFV server (like our fake mirror output action above), and use a VLAN tag to identify what port the traffic originated on on the switch.
 To do this we will use both the 'port' & 'vlan_vid' output fields.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     block-ping:

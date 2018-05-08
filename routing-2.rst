@@ -89,7 +89,7 @@ Create the 2 bridges and add hosts 1 & 2 to br1 and 3 & 4 to br2
 First we will remove the routing configuration and separate the two datapath configurations into there own files.
 They should look like this.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: sw1-faucet.yaml
 
     vlans:
@@ -124,7 +124,7 @@ They should look like this.
                     description: "host2 network namespace"
                     native_vlan: br1-hosts
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: sw2-faucet.yaml
 
     vlans:
@@ -247,7 +247,7 @@ Now bgphost1 should be able to ping 172.16.1.1 & bgphost2 should be able to ping
 To configure BIRD1
 Create bird1.conf on $HOME
 
-.. code:: conf
+.. code-block:: conf
     :caption: $HOME/bird1.conf
 
     protocol kernel {
@@ -281,7 +281,7 @@ Create bird1.conf on $HOME
 
 and for BIRD2:
 
-.. code:: conf
+.. code-block:: conf
     :caption: $HOME/bird.conf
 
     protocol kernel {
@@ -328,7 +328,7 @@ and
 
 We'll configure the Faucets by adding the BGP configuration to the \*-peer VLAN.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: $HOME/sw1-faucet.yaml
 
     vlans:
@@ -354,7 +354,7 @@ We'll configure the Faucets by adding the BGP configuration to the \*-peer VLAN.
         br1-router:
             vlans: [br1-hosts, br1-peer]
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: $HOME/sw2-faucet.yaml
 
     vlans:
@@ -382,7 +382,7 @@ We'll configure the Faucets by adding the BGP configuration to the \*-peer VLAN.
 
 And finally add the port configuration for the bgphost.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: sw1-facuet.yaml
 
     dps:
@@ -395,7 +395,7 @@ And finally add the port configuration for the bgphost.
 
 and
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: sw2-facuet.yaml
 
     dps:
@@ -451,7 +451,7 @@ Remove the old 10.0.0.0/24 IP address and add the new one.
 
 And configure Faucet to put host 2 in a new VLAN.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/sw1-faucet.yaml
 
     vlans:
@@ -463,7 +463,7 @@ And configure Faucet to put host 2 in a new VLAN.
 
 Add the VLAN to the Inter VLAN router:
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/sw1-faucet.yaml
 
     routers:
@@ -472,7 +472,7 @@ Add the VLAN to the Inter VLAN router:
 
 And change port 2's native VLAN, so the final configuration should look like:
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/sw1-faucet.yaml
 
     vlans:
@@ -523,7 +523,7 @@ Restart Faucet 1 to reload our config and host2 should be able to ping host1, bu
 We need to advertise our new 10.0.2.0/24 via bgp.
 So in the 'protocol static' section of bird.conf add the new route.
 
-.. code:: conf
+.. code-block:: conf
     :caption: /etc/bird.conf
 
     protocol static {

@@ -71,7 +71,7 @@ We will run install dnsmasq and run DHCP service on host2
 
 Now let's configure faucet yaml file (/etc/faucet/faucet.yaml)
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
@@ -217,7 +217,7 @@ Configure BRO
 
 In $PREFIX/etc/node.cfg, set veth0 as the interface to monitor
 
-.. code:: cfg
+.. code-block:: cfg
     :caption: $PREFIX/etc/node.cfg
 
     [bro]
@@ -227,7 +227,7 @@ In $PREFIX/etc/node.cfg, set veth0 as the interface to monitor
 
 Comment out MailTo in $PREFIX/etc/broctl.cfg
 
-.. code:: cfg
+.. code-block:: cfg
     :caption: $PREFIX/etc/broctl.cfg
 
     # Recipient address for all emails sent out by Bro and BroControl.
@@ -262,7 +262,7 @@ Now let's put BRO in different vlan and mirror the office vlan traffic to BRO.
 
 We will use vlan acls (more about acl and vlan check vlan and acl tutorials).
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:

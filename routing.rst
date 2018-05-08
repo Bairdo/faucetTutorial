@@ -46,7 +46,7 @@ Run the cleanup script to remove old namespaces and switches:
 To allow traffic between vlans we use a router, and assign each VLAN at least one IP address (gateway IP address).
 Lets add the routers and vlans section like so.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
@@ -158,7 +158,7 @@ Multiple IP addresses (IPv4 & IPv6) can be used.
 - routes: Static routes for this VLAN.
 
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
@@ -181,7 +181,7 @@ Multiple IP addresses (IPv4 & IPv6) can be used.
 As our routing interface is in a different VLAN, we will want to route between the two VLANs on the switch (br1-hosts & br1-peer).
 So as with inter VLAN routing we will create a router for each switch.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     routers:
@@ -190,7 +190,7 @@ So as with inter VLAN routing we will create a router for each switch.
 
 And the rest of the configuration looks like this:
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     dps:
@@ -260,7 +260,7 @@ When using BGP and Faucet, if changing Faucet's routing configuration (routers, 
 
 Remove the static routes added above:
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
@@ -327,7 +327,7 @@ Next we will add Faucet to our switch's data plane so that it can communicate wi
 
 To configure BIRD
 
-.. code:: conf
+.. code-block:: conf
     :caption: /etc/bird.conf
 
     protocol kernel {
@@ -361,7 +361,7 @@ Start BIRD
 
 We'll configure Faucet by adding the BGP configuration to the br1-gw VLAN.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
@@ -389,7 +389,7 @@ We'll configure Faucet by adding the BGP configuration to the br1-gw VLAN.
 
 And finally add the port configuration for the Faucet data plane interface (veth-faucet0).
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/facuet.yaml
 
     dps:
@@ -411,7 +411,7 @@ Now restart Faucet.
 
 and our logs should show us 'BGP peer router *** up'.
 
-.. code:: log
+.. code-block:: log
     :caption: /var/log/faucet/faucet.log
 
     ...

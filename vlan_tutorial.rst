@@ -148,7 +148,7 @@ Basic vlan settings
 
 Change /etc/faucet/faucet.yaml to reflect our setting.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
@@ -252,7 +252,7 @@ Let's apply an ACL on a particular vlan (e.g. vlan300). We will block any ICMP p
 First create an ACL to block the ping.
 Open /etc/faucet/faucet.yaml and add the 'acls' section.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     acls:
@@ -270,7 +270,7 @@ Open /etc/faucet/faucet.yaml and add the 'acls' section.
 
 Then apply this on the vlan300.
 
-.. code:: yaml
+.. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
