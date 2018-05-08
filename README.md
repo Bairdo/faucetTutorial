@@ -2,9 +2,10 @@
 
 Note: this tutorial is work in progress.
 
-Eventually this repositry will be moved into the faucet docs website where the rst files will be compiled to html.
+Eventually this repository will be moved into the faucet docs website where the rst files will be compiled to html.
 So some of the yaml code blocks are not rendered while viewing on github.
 As a temporary workaround view the rst as a 'raw'.
+Or download the \_build folder which contains the generated html file.
 
 
 Start with [Installing faucet for the first time](https://faucet.readthedocs.io/en/latest/tutorials.html)
