@@ -23,7 +23,7 @@ BGP Routing
 For this section we are going create two Autonomous Systems (AS).
 Each switch will therefore be controlled by a separate Faucet.
 
-BGP (and other routing) is provided by a NFV service, here we will use [BIRD](http://bird.network.cz/).
+BGP (and other routing) is provided by a NFV service, here we will use `BIRD <http://bird.network.cz/>`_.
 Other applications such as ExaBGP & Quagga could be used.
 
 If you are NOT using the workshop VM you will need to install BIRD.
