@@ -15,7 +15,7 @@ Prerequisites:
 
 - Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`_
 - OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`_
-- Useful Bash Functions (create_ns, as_ns, cleanup)
+- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_)
 
 
 Routing between VLANs
@@ -24,6 +24,12 @@ Let's start with a single switch connected to two hosts in two different vlans.
 
 .. image:: _static/images/vlan-routing.svg
     :alt: vlan routing diagram
+
+Run the cleanup script to remove old namespaces and switches:
+.. code:: console
+
+    cleanup
+
 
 .. code:: console
 

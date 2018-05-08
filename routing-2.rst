@@ -6,11 +6,19 @@ TODO this is just copied from the original routing. it needs to be updated.
 Routing 2 Tutorial
 ==================
 
+This tutorial expands on the `routing tutorial <routing.html>`_ and will add route policy via an external BGP service.
+
+Prerequisites:
+^^^^^^^^^^^^^^
+
+- Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`_
+- OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`_
+- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_)
+
 BGP Routing
 ^^^^^^^^^^^
 
-For this section we are going to change our static routes from above into BGP routes.
-To do this each switch will become it's own Autonomous System (AS).
+For this section we are going create two Autonomous Systems (AS).
 Each switch will therefore be controlled by a separate Faucet.
 
 BGP (and other routing) is provided by a NFV service, here we will use [BIRD](http://bird.network.cz/).
@@ -24,11 +32,53 @@ To install BIRD:
 
     apt-get install bird
 
+Run the cleanup script to remove old namespaces and switches:
+.. code:: console
+
+    cleanup
 
 Our dataplane will end up looking like this:
 
 .. image:: _static/images/routing2-bgp-dataplane.svg
     :alt: BGP network diagram
+
+Create 4 host, in two different subnets:
+
+.. code:: console
+
+    create_ns host1 10.0.0.1/24
+    create_ns host2 10.0.0.2/24
+    create_ns host3 10.0.1.3/24
+    create_ns host4 10.0.1.4/24
+
+And add a default route for each host to it's gateway router.
+
+.. code:: console
+
+    as_ns host1 ip route add default via 10.0.0.254
+    as_ns host2 ip route add default via 10.0.0.254
+    as_ns host3 ip route add default via 10.0.1.254
+    as_ns host4 ip route add default via 10.0.1.254
+
+Create the 2 bridges and add hosts 1 & 2 to br1 and 3 & 4 to br2
+
+.. code:: console
+
+    sudo ovs-vsctl add-br br1 \
+    -- set bridge br1 other-config:datapath-id=0000000000000001 \
+    -- set bridge br1 other-config:disable-in-band=true \
+    -- set bridge br1 fail_mode=secure \
+    -- add-port br1 veth-host1 -- set interface veth-host1 ofport_request=2 \
+    -- add-port br1 veth-host2 -- set interface veth-host2 ofport_request=3 \
+    -- set-controller br1 tcp:127.0.0.1:6653 tcp:127.0.0.1:6654
+
+    sudo ovs-vsctl add-br br2 \
+    -- set bridge br2 other-config:datapath-id=0000000000000002 \
+    -- set bridge br2 other-config:disable-in-band=true \
+    -- set bridge br2 fail_mode=secure \
+    -- add-port br2 veth-host3 -- set interface veth-host3 ofport_request=2 \
+    -- add-port br2 veth-host4 -- set interface veth-host4 ofport_request=3 \
+    -- set-controller br2 tcp:127.0.0.1:6653 tcp:127.0.0.1:6654
 
 .. note:: When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP config) the Faucet application must be restarted to reload the configuration (not sighup reloaded).
 
@@ -339,6 +389,7 @@ And finally add the port configuration for the bgphost.
                     native_vlan: br1-peer
 
 and
+
 .. code:: yaml
     :caption: sw2-facuet.yaml
 
