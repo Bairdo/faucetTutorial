@@ -236,31 +236,24 @@ Comment out MailTo in $PREFIX/etc/broctl.cfg
 Run bro in host2
 ++++++++++++++++
 
-Let's now run bro in the host2 namespace.
-
-.. code:: console
-
-    cd /usr/local/bro/bin
-    as_ns host1 ./broctl
-
 Since this is the first-time use of the bro command shell application, perform an initial installation of the BroControl configuration:
 
 .. code:: console
 
-    [BroControl] > install
+    as_ns host1 /usr/local/bro/bin/broctl install
 
 
 Then start bro instant
 
 .. code:: console
 
-    [BroControl] > start
+    as_ns host1 /usr/local/bro/bin/broctl start
 
 Check bro status
 
 .. code:: console
 
-    [BroControl] > status
+    as_ns host1 /usr/local/bro/bin/broctl status
     Name         Type       Host          Status    Pid    Started
     bro          standalone localhost     running   15052  07 May 09:03:59
 
