@@ -98,7 +98,7 @@ It should work and traffic should go through.
 Static Routing
 ^^^^^^^^^^^^^^
 
-For this we will setup a Faucet switch with three hosts.
+For this we will set-up a Faucet switch with three hosts.
 One of these hosts will act like a gateway,
 
 .. image:: _static/images/static-routing.svg
@@ -110,7 +110,7 @@ Run the cleanup script to remove old namespaces and switches.
     cleanup
 
 
-Create 3 hosts, in 2 diffferent subnets:
+Create 3 hosts, in 2 different subnets:
 
 .. code:: console
 
@@ -144,8 +144,9 @@ Create the bridge and add hosts 1, 2 and the gw to br1.
 
 For this Faucet configuration we will start from scratch.
 First we need to define 2 VLANs.
-1. hosts.
-2. gw.
+
+1. Hosts.
+2. Gateway.
 
 Here we have 3 new options:
 
@@ -187,7 +188,7 @@ So as with inter VLAN routing we will create a router for each switch.
         router-br1:
             vlans: [br1-hosts, br1-gw]
 
-And the rest of the config looks like this:
+And the rest of the configuration looks like this:
 
 .. code:: yaml
     :caption: /etc/faucet/faucet.yaml
@@ -218,7 +219,7 @@ Start/reload Faucet.
     sudo systemctl restart faucet
 
 
-and we should now be able to ping (the first few packets may get lost as ?arp? does it's thing).
+And we should now be able to ping (the first few packets may get lost as ?arp? Does it's thing).
 
 .. code:: console
 
@@ -237,7 +238,7 @@ For this section we are going to change our static routes from above into BGP ro
 BGP (and other routing) is provided by a NFV service, here we will use [BIRD](http://bird.network.cz/).
 Other applications such as ExaBGP & Quagga could be used.
 Faucet imports all routes provided by this NVF service.
-This means we can use our service for other routing protocols (OSPF, RIP, etc) and apply filtering using the serivce's policy langague.
+This means we can use our service for other routing protocols (OSPF, RIP, etc) and apply filtering using the service's policy language.
 See [routing-2](routing-2.rst) for more advanced BGP route filtering.
 
 If you are NOT using the workshop VM you will need to install BIRD.
@@ -249,13 +250,13 @@ To install BIRD:
     apt-get install bird
 
 
-Our dataplane will end up looking like this:
+Our data plane will end up looking like this:
 
 .. image:: _static/images/bgp-dataplane.svg
     :alt: BGP network diagram
 
 Note 1:
-When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP config) the Faucet application must be restarted to reload the configuration correctly (not sighup reloaded).
+When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP configuration) the Faucet application must be restarted to reload the configuration correctly (not sighup reloaded).
 
 Remove the static routes added above:
 
@@ -312,7 +313,7 @@ And check that host1 can ping host2 but not the gw.
     as_ns host1 ping 10.0.1.3
 
 
-Next we will add Faucet to our switch's dataplane so that it can communicate with the BGP speaking hostgw.
+Next we will add Faucet to our switch's data plane so that it can communicate with the BGP speaking hostgw.
 
 .. image:: _static/images/bgp-routing-ns.svg
     :alt: BGP Routing Namespace Diagram
@@ -386,7 +387,7 @@ We'll configure Faucet by adding the BGP configuration to the br1-gw VLAN.
         br1-router:
             vlans: [br1-hosts, br1-gw]
 
-And finally add the port configuration for the Faucet dataplane interface (veth-faucet0).
+And finally add the port configuration for the Faucet data plane interface (veth-faucet0).
 
 .. code:: yaml
     :caption: /etc/faucet/facuet.yaml
