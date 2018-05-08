@@ -168,6 +168,7 @@ Ping should have 100% packet loss.
 There is also the 'output' action which can be used to acheive the same thing.
 
 .. code:: yaml
+    :caption: /etc/faucet/faucet.yaml
 
     block-ping:
         - rule:
@@ -194,7 +195,6 @@ Let's create a new ACL for host2's port that will change the MAC source address.
 
 .. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
-    :name: new-acl-faucet.yaml
 
     dps:
         sw1:
