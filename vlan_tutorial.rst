@@ -35,7 +35,7 @@ To demonistrate these tasks we will use a demo network where a single switch br0
 
 Here is the structure of the demo setup.
 
-.. image:: faucetVLANTutorial.png
+.. image:: _static/images/faucetVLANTutorial.png
     :alt: Demo network setup
     :align: center
 

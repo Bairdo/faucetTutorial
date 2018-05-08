@@ -1,5 +1,3 @@
-#TODO maybe setup everything and config except the routing stuff first. and show cannot ping between the two subnets?
-
 Routing Tutorial
 ================
 
@@ -26,6 +24,7 @@ Let's start with a single switch connected to two hosts in two different vlans.
     :alt: vlan routing diagram
 
 Run the cleanup script to remove old namespaces and switches:
+
 .. code:: console
 
     cleanup
