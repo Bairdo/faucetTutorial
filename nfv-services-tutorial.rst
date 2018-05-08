@@ -194,41 +194,26 @@ We need first to install bro. We will use the binary package version 2.5.3 for t
 
 .. code:: console
 
-    # install the prerequisites
-    sudo apt-get install cmake make gcc g++ flex bison libpcap-dev libssl-dev python-dev swig zlib1g-dev
-    # install the binary package
-    wget https://www.bro.org/downloads/bro-2.5.3.tar.gz -P $HOME
-    tar -xf bro-2.5.3.tar.gz
-    cd bro-2.5.3/
-    # configure, make and install
-    ./configure
-    make
-    sudo make install
+    sudp apt-get install bro broctl
 
-Add bro location to the PATH directory and export PREFIX
-
-.. code:: console
-
-    export PATH=/usr/local/bro/bin:$PATH
-    export PREFIX=/usr/local/bro
 
 Configure BRO
 -------------
 
-In $PREFIX/etc/node.cfg, set veth0 as the interface to monitor
+In /etc/bro/node.cfg, set veth0 as the interface to monitor
 
 .. code-block:: cfg
-    :caption: $PREFIX/etc/node.cfg
+    :caption: /etc/bro/node.cfg
 
     [bro]
     type=standalone
     host=localhost
     interface=veth0
 
-Comment out MailTo in $PREFIX/etc/broctl.cfg
+Comment out MailTo in /etc/bro/broctl.cfg
 
 .. code-block:: cfg
-    :caption: $PREFIX/etc/broctl.cfg
+    :caption: /etc/bro/broctl.cfg
 
     # Recipient address for all emails sent out by Bro and BroControl.
     # MailTo = root@localhost
@@ -240,20 +225,20 @@ Since this is the first-time use of the bro command shell application, perform a
 
 .. code:: console
 
-    as_ns host1 /usr/local/bro/bin/broctl install
+    as_ns host1 broctl install
 
 
 Then start bro instant
 
 .. code:: console
 
-    as_ns host1 /usr/local/bro/bin/broctl start
+    as_ns host1 broctl start
 
 Check bro status
 
 .. code:: console
 
-    as_ns host1 /usr/local/bro/bin/broctl status
+    as_ns host1 broctl status
     Name         Type       Host          Status    Pid    Started
     bro          standalone localhost     running   15052  07 May 09:03:59
 
@@ -311,4 +296,4 @@ As usual reload faucet configuration file.
 
     sudo pkill -HUP -f "faucet\.faucet"
 
-To check BRO log files go to *$PREFIX/logs*.
+To check BRO log files go to */var/log/bro/current/*.
