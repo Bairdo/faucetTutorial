@@ -327,7 +327,7 @@ Next we will add Faucet to our switch's data plane so that it can communicate wi
 
 To configure BIRD
 
-.. code-block:: conf
+.. code-block:: cfg
     :caption: /etc/bird.conf
 
     protocol kernel {
@@ -411,7 +411,7 @@ Now restart Faucet.
 
 and our logs should show us 'BGP peer router *** up'.
 
-.. code-block:: log
+.. code-block:: console
     :caption: /var/log/faucet/faucet.log
 
     ...
