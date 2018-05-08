@@ -1,11 +1,11 @@
 ACLs tutorial
 =============
 
-In the `first tutorial <tutorials.html>`_ we covered how to install and setup Faucet.
+In the `first tutorial <tutorials.html>`_ we covered how to install and set-up Faucet.
 Next we are going to introduce Access Control Lists (ACLs).
 
 
-ETA: ~25 mins.
+ETA: ~25 minutes.
 
 Prerequisites:
 --------------
@@ -16,7 +16,7 @@ Prerequisites:
 
 
 .. note:: tcpdump is used to capture packets, sometimes it may be nescessary to exit tcpdump (ctrl + c) before packet output is shown.
-unless stated tcpdump will be used with ping and it should only be nescassry to run both for ~10 seconds.
+unless stated tcpdump will be used with ping and it should only be necessary to run both for ~10 seconds.
 
 
 First we will add two new hosts to our network:
@@ -26,7 +26,7 @@ First we will add two new hosts to our network:
     create_ns host3 192.168.0.3/24
     create_ns host4 192.168.0.4/24
 
-and connect them to br0
+And connect them to br0
 
 .. code:: console
 
@@ -34,7 +34,7 @@ and connect them to br0
     -- add-port br0 veth-host4 -- set interface veth-host4 ofport_request=4
 
 
-The configurtaion below will block ICMP on traffic coming in on port 3, and allow everything else.
+The configuration below will block ICMP on traffic coming in on port 3, and allow everything else.
 Add this to /etc/faucet/faucet.yaml below the 'dps'.
 
 .. code:: yaml
@@ -66,14 +66,15 @@ Add this to /etc/faucet/faucet.yaml below the 'dps'.
 
 
 Faucet ACLs are made up of lists of rules.
-The order of the rules in the list denote the prioirty with the first rules being highest and last lowest.
+The order of the rules in the list denote the priority with the first rules being highest and last lowest.
 Each of these lists has a name (e.g. 'block-ping'), and can be used on multiple port or VLAN 'acls_in' fields.
 Again these are applied in order so all of 'block-ping' rules will be higher than 'allow-all'.
 
 Each rule contains two main items 'matches' and 'actions'.
 Matches are any packet field such as MAC/IP/transport source/destination fields.
 For a full list visit https://ryu.readthedocs.io/en/latest/ofproto_v1_3_ref.html#flow-match-structure
-Actions are used to control what the packet does, for example normal l2 forwarding ('allow'). apply a 'meter' to rate limit traffic, and manpulation of the packet contents and output.
+Actions are used to control what the packet does, for example normal l2 forwarding ('allow').
+Apply a 'meter' to rate limit traffic, and manipulation of the packet contents and output.
 Full list https://faucet.readthedocs.io/en/latest/configuration.html#id13
 
 The above example has defined two ACLs 'block-ping' & 'allow-all' these can be used on any and multiple ports or VLANs (more on VLANs later) using the 'acls_in' key.
@@ -83,7 +84,7 @@ The 'allow' action is a boolean, if it's True allow the packet to continue throu
 'allow' can be used in conjunction with the other actions to let the traffic flow with the expected layer 2 forwarding behaviour AND be mirrored to another port.
 
 
-Now tell Faucet to reload its configuration, this can be done be restarting the application.
+Now tell Faucet to reload its configuration, this can be done by restarting the application.
 But a better way is to send Faucet a SIGHUP signal.
 
 .. code:: console
@@ -165,7 +166,7 @@ Ping should have 100% packet loss.
 
 
 
-There is also the 'output' action which can be used to acheive the same thing.
+There is also the 'output' action which can be used to achieve the same thing.
 
 .. code:: yaml
     :caption: /etc/faucet/faucet.yaml
@@ -216,7 +217,7 @@ Let's create a new ACL for host2's port that will change the MAC source address.
     ...
 
 
-again reload Faucet.
+Again reload Faucet.
 
 Start tcpdump on host1
 
@@ -224,7 +225,7 @@ Start tcpdump on host1
 
     as_ns host1 tcpdump -e -n -i veth0
 
-ping host1 from host2
+Ping host1 from host2
 
 .. code:: console
 
@@ -274,7 +275,7 @@ To do this we will use both the 'port' & 'vlan_vid' output fields.
 
 
 Again reload Faucet, start a tcpdump on host4, and ping from host1 to host3.
-Ping should still not be allowed through and the TCPDump output should be similar to below (Note the 802.1Q tag and vlan 3):
+Ping should still not be allowed through and the tcpdump output should be similar to below (Note the 802.1Q tag and vlan 3):
 
 .. code:: console
 
