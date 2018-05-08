@@ -15,6 +15,8 @@ Prerequisites:
 - OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`_
 - Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_)
 
+.. note:: For this tutorial it is a good idea to use a terminal multiplexer (screen, tmux or just multiple terminal sessions), as we will be running multiple applications at the same time.
+
 BGP Routing
 ^^^^^^^^^^^
 
@@ -37,7 +39,7 @@ Run the cleanup script to remove old namespaces and switches:
 
     cleanup
 
-Our dataplane will end up looking like this:
+Our data plane will end up looking like this:
 
 .. image:: _static/images/routing2-bgp-dataplane.svg
     :alt: BGP network diagram
@@ -83,7 +85,7 @@ Create the 2 bridges and add hosts 1 & 2 to br1 and 3 & 4 to br2
 .. note:: When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP config) the Faucet application must be restarted to reload the configuration (not sighup reloaded).
 
 
-First we will remove the routing configuration and separate the two datapath configs into there own files.
+First we will remove the routing configuration and separate the two datapath configurations into there own files.
 They should look like this.
 
 .. code:: yaml
@@ -169,7 +171,8 @@ And stop the system Faucet
     sudo systemctl stop faucet
 
 
-And now we can start the Faucets (start them in different terminals, we will need to restart them later).
+And now we can start the Faucets (**start them in different terminals, we will need to restart them later**).
+
 .. code:: console
 
     sudo env FAUCET_CONFIG=$HOME/sw1-faucet.yaml FAUCET_LOG=/var/log/faucet/sw1-faucet.log faucet
