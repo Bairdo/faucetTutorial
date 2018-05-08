@@ -15,8 +15,7 @@ Prerequisites:
 - Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_)
 
 
-.. note:: tcpdump is used to capture packets, sometimes it may be nescessary to exit tcpdump (ctrl + c) before packet output is shown.
-unless stated tcpdump will be used with ping and it should only be necessary to run both for ~10 seconds.
+.. note:: tcpdump is used to capture packets, sometimes it may be nescessary to exit tcpdump (ctrl + c) before packet output is shown. Unless stated tcpdump will be used with ping and it should only be necessary to run both for ~10 seconds.
 
 
 First we will add two new hosts to our network:

@@ -15,6 +15,12 @@ Prerequisites:
 - OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`_
 - Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_)
 
+Run the cleanup script to remove old namespaces and switches:
+
+.. code:: console
+
+    cleanup
+
 
 Routing between VLANs
 ^^^^^^^^^^^^^^^^^^^^^
@@ -22,12 +28,6 @@ Let's start with a single switch connected to two hosts in two different vlans.
 
 .. image:: _static/images/vlan-routing.svg
     :alt: vlan routing diagram
-
-Run the cleanup script to remove old namespaces and switches:
-
-.. code:: console
-
-    cleanup
 
 
 .. code:: console
@@ -48,6 +48,7 @@ Lets add the routers and vlans section like so.
 
 .. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
+    :name: intervlan-routing-yaml
 
     vlans:
         vlan100:
@@ -75,7 +76,7 @@ Lets add the routers and vlans section like so.
                     description: "host2 network namespace"
                     native_vlan: vlan200
 
-Send SIGHUP signal to reload the configuration file.
+Send the SIGHUP signal to reload the configuration file.
 
 .. code:: console
 
@@ -84,12 +85,14 @@ Send SIGHUP signal to reload the configuration file.
 Add the default route to the 'faucet_vips' as above.
 
 .. code:: console
+
     as_ns host1 ip route add default via 10.0.0.254 dev veth0
     as_ns host2 ip route add default via 10.0.1.254 dev veth0
 
 Then generate some traffic between our two hosts.
 
 .. code:: console
+
     as_ns host1 ping 10.0.1.2
 
 It should work and traffic should go through.
@@ -107,6 +110,7 @@ One of these hosts will act like a gateway,
 Run the cleanup script to remove old namespaces and switches.
 
 .. code:: console
+
     cleanup
 
 
@@ -150,11 +154,8 @@ First we need to define 2 VLANs.
 
 Here we have 3 new options:
 
-- faucet_mac: The MAC address of Faucet's routing interface on this VLAN.
-If we do not set faucet_mac for each VLAN, routed packets will be dropped unless 'drop_spoofed_faucet_mac' is set to false.
-TODO explain above more.
-- faucet_vips: The IP address for Faucet's routing interface on this VLAN.
-Multiple IP addresses (IPv4 & IPv6) can be used.
+- faucet_mac: The MAC address of Faucet's routing interface on this VLAN. If we do not set faucet_mac for each VLAN, routed packets will be dropped unless 'drop_spoofed_faucet_mac' is set to false. TODO explain above more.
+- faucet_vips: The IP address for Faucet's routing interface on this VLAN. Multiple IP addresses (IPv4 & IPv6) can be used.
 - routes: Static routes for this VLAN.
 
 
@@ -239,9 +240,12 @@ BGP (and other routing) is provided by a NFV service, here we will use [BIRD](ht
 Other applications such as ExaBGP & Quagga could be used.
 Faucet imports all routes provided by this NVF service.
 This means we can use our service for other routing protocols (OSPF, RIP, etc) and apply filtering using the service's policy language.
-See [routing-2](routing-2.rst) for more advanced BGP route filtering.
+See `Routing 2 Tutorial <routing-2.html>`_ for more advanced BGP route filtering.
 
 If you are NOT using the workshop VM you will need to install BIRD.
+
+Setup
+-----
 
 To install BIRD:
 
@@ -302,6 +306,7 @@ Remove the static routes added above:
 Reload Faucet
 
 .. code:: console
+
     TODO does sighup work here?
 
 
@@ -357,6 +362,7 @@ To configure BIRD
 Start BIRD
 
 .. code:: console
+
     as_ns hostgw bird
 
 We'll configure Faucet by adding the BGP configuration to the br1-gw VLAN.
@@ -409,7 +415,7 @@ Now restart Faucet.
     sudo systemctl restart faucet
 
 
-and our logs should show us 'BGP peer router *** up'.
+and our logs should show us 'BGP peer router \*** up'.
 
 .. code-block:: console
     :caption: /var/log/faucet/faucet.log

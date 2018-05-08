@@ -186,7 +186,7 @@ Check the logs to confirm the two switches have connected to the correct Faucet.
 
     cat /var/log/faucet/sw2-faucet.log
 
-.. code:: log
+.. code::
 
     May 03 10:51:57 faucet INFO     Loaded configuration from /home/ubuntu/sw2-faucet.yaml
     May 03 10:51:57 faucet INFO     Add new datapath DPID 2 (0x2)
@@ -247,7 +247,7 @@ Now bgphost1 should be able to ping 172.16.1.1 & bgphost2 should be able to ping
 To configure BIRD1
 Create bird1.conf on $HOME
 
-.. code-block:: conf
+.. code-block:: cfg
     :caption: $HOME/bird1.conf
 
     protocol kernel {
@@ -281,7 +281,7 @@ Create bird1.conf on $HOME
 
 and for BIRD2:
 
-.. code-block:: conf
+.. code-block:: cfg
     :caption: $HOME/bird.conf
 
     protocol kernel {
@@ -416,6 +416,7 @@ Now restart the Faucets.
 and our logs should show us BGP peer router up.
 
 .. code:: console
+
     cat /var/log/faucet/sw1-faucet.log
 
     ...
@@ -428,6 +429,7 @@ Now we should be able to ping from host1 to host3.
 To confirm we are getting the routes from BGP we can query BIRD:
 
 .. code:: console
+
     birdcl -s /var/run/bird2.ctl show route
     BIRD 1.6.4 ready.
     10.0.0.0/24        via 192.168.1.1 on veth0 [fruit 11:38:47 from 192.168.1.3] * (100) [AS64512i]
@@ -523,7 +525,7 @@ Restart Faucet 1 to reload our config and host2 should be able to ping host1, bu
 We need to advertise our new 10.0.2.0/24 via bgp.
 So in the 'protocol static' section of bird.conf add the new route.
 
-.. code-block:: conf
+.. code-block:: cfg
     :caption: /etc/bird.conf
 
     protocol static {

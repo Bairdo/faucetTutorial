@@ -36,3 +36,13 @@ THe VM will need to have already installed:
 
 Those set up scripts (create_ns, as_ns, clear_ns, cleanup) could be placed in the bashrc.
 Basic vim config for spaces not tabs.
+
+
+
+To build the html (on ecs machine)
+
+run
+```bash
+pip3 --user -r requirements.txt
+make html
+```
