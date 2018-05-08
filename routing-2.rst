@@ -35,6 +35,7 @@ To install BIRD:
     apt-get install bird
 
 Run the cleanup script to remove old namespaces and switches:
+
 .. code:: console
 
     cleanup
@@ -222,7 +223,8 @@ Next we will add a new host to run our BGP service on, connect it to the switch'
     sudo ip link set veth-bgphost1-0 up
     as_ns bgphost1 ip link set vethbgpctrl0 up
 
-And repeat for the other side.
+And repeat for the other side:
+
 .. code:: console
 
     create_ns bgphost2 192.168.1.4/24
