@@ -22,7 +22,7 @@ Routing between VLANs
 ^^^^^^^^^^^^^^^^^^^^^
 Let's start with a single switch connected to two hosts in two different vlans.
 
-.. image:: vlan-routing.svg
+.. image:: _static/images/vlan-routing.svg
     :alt: vlan routing diagram
 
 .. code:: console
@@ -96,7 +96,7 @@ Static Routing
 For this we will setup a Faucet switch with three hosts.
 One of these hosts will act like a gateway,
 
-.. image:: static-routing.svg
+.. image:: _static/images/static-routing.svg
     :alt: static routing network diagram
 
 Run the cleanup script to remove old namespaces and switches.
@@ -246,7 +246,7 @@ To install BIRD:
 
 Our dataplane will end up looking like this:
 
-.. image:: bgp-dataplane.svg
+.. image:: _static/images/bgp-dataplane.svg
     :alt: BGP network diagram
 
 Note 1:
@@ -309,7 +309,7 @@ And check that host1 can ping host2 but not the gw.
 
 Next we will add Faucet to our switch's dataplane so that it can communicate with the BGP speaking hostgw.
 
-.. image:: bgp-routing-ns.svg
+.. image:: _static/images/bgp-routing-ns.svg
     :alt: BGP Routing Namespace Diagram
 
 .. code:: console

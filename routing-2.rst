@@ -27,7 +27,7 @@ To install BIRD:
 
 Our dataplane will end up looking like this:
 
-.. image:: routing2-bgp-dataplane.svg
+.. image:: _static/images/routing2-bgp-dataplane.svg
     :alt: BGP network diagram
 
 .. note:: When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP config) the Faucet application must be restarted to reload the configuration (not sighup reloaded).
@@ -155,7 +155,7 @@ And check that host1 can ping host2 but not host3 or host4.
 
 Next we will add a new host to run our BGP service on, connect it to the switch's dataplane and create a virtual link for it to be able to communicate with Faucet.
 
-.. image:: bgp-routing-ns.svg
+.. image:: _static/images/routing2-bgp-routing-ns.svg
     :alt: BGP Routing Namespace Diagram
 
 .. code:: console
