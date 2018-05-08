@@ -40,7 +40,7 @@ Then we will create a switch with five hosts as following
     create_ns host4 0              # normal host
     create_ns host5 0              # normal host
 
-Then create an open vswtich and connect all hosts to it.
+Then create an OpenvSwitch and connect all hosts to it.
 
 .. code:: console
 
@@ -104,7 +104,7 @@ Now let's configure faucet yaml file (/etc/faucet/faucet.yaml)
                     description: "host5 network namespace"
                     native_vlan: office
 
-now restart faucet
+Now restart faucet
 
 .. code:: console
 
@@ -117,7 +117,7 @@ Use dhclient to configure host4 and host4 using DHCP (it may take few seconds).
     as_ns host4 dhclient veth0
     as_ns host5 dhclient veth0
 
-You can check */tmp/nfv-dhcp.leases* and */tmp/nfv.dhcp.log* to find what IP address is assinged to host4 and host5.
+You can check */tmp/nfv-dhcp.leases* and */tmp/nfv.dhcp.log* to find what IP address is assigned to host4 and host5.
 Alternatively:
 
 .. code:: console
@@ -176,7 +176,7 @@ In this section we will configure host3 as a gateway (NAT) to provide internet c
     sudo iptables -A FORWARD -i ${TO_NS} -o ${OUT_INTF} -j ACCEPT
 
 
-Now try to ping google from host4 or host5, it should work as the gateway is now configured.
+Now try to ping google.com from host4 or host5, it should work as the gateway is now configured.
 
 .. code:: console
 
@@ -190,7 +190,7 @@ BRO IDS
 BRO installation
 ----------------
 
-We need first to install bro. We will use the binary backage version 2.5.3 for this test.
+We need first to install bro. We will use the binary package version 2.5.3 for this test.
 
 .. code:: console
 
@@ -225,9 +225,11 @@ In $PREFIX/etc/node.cfg, set veth0 as the interface to monitor
     host=localhost
     interface=veth0
 
-Comment out mailto in $PREFIX/etc/broctl.cfg
+Comment out MailTo in $PREFIX/etc/broctl.cfg
 
-.. code:: console
+.. code:: cfg
+    :caption: $PREFIX/etc/broctl.cfg
+
     # Recipient address for all emails sent out by Bro and BroControl.
     # MailTo = root@localhost
 
