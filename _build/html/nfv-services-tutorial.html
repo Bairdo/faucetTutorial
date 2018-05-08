@@ -1,0 +1,494 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>NFV Services Tutorial &mdash; Python  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Python
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction to Faucet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recipe_book/index.html">Configuration Recipe Book</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vendors/index.html">Vendor-specific Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="external_resources.html">External Resources</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="developer_guide.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fuzzing.html">Fuzzing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="source/index.html">Source Code</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>NFV Services Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/nfv-services-tutorial.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nfv-services-tutorial">
+<h1>NFV Services Tutorial<a class="headerlink" href="#nfv-services-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial will cover using Faucet with Network Function Virtualisation (NFV) services.</p>
+<p>NFV services that will be demonstrated in this tutorial are:</p>
+<ul class="simple">
+<li>DHCP server</li>
+<li>NAT Gateway</li>
+<li>BRO IDS</li>
+</ul>
+<p>This tutorial demonstrates how the previous topics in this tutorial series can be integrated with other services on our network.</p>
+<div class="section" id="prerequisites">
+<h2>Prerequisites:<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Good understanding of the previous tutorial series topics (<a class="reference external" href="ACLs.html">ACLs</a>, <a class="reference external" href="vlan-tutorial.html">VLANs</a>, <a class="reference external" href="routing.html">Routing</a>)</li>
+<li>Faucet <a class="reference external" href="https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation">Steps 1 &amp; 2</a></li>
+<li>OpenVSwitch <a class="reference external" href="https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath">Steps 1 &amp; 2</a></li>
+<li>Useful Bash Functions (<a class="reference external" href="_static/tutorial/create_ns">create_ns</a>, <a class="reference external" href="_static/tutorial/as_ns">as_ns</a>, <a class="reference external" href="_static/tutorial/cleanup">cleanup</a>)</li>
+</ul>
+</div>
+<div class="section" id="network-setup">
+<h2>Network setup<a class="headerlink" href="#network-setup" title="Permalink to this headline">¶</a></h2>
+<p>Let’s start by run the cleanup script to remove old namespaces and switches.</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cleanup</span>
+</pre></div>
+</div>
+<p>Then we will create a switch with five hosts as following</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">create_ns</span> <span class="n">host1</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">0.1</span><span class="o">/</span><span class="mi">24</span> <span class="c1"># BRO</span>
+<span class="n">create_ns</span> <span class="n">host2</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">0.2</span><span class="o">/</span><span class="mi">24</span> <span class="c1"># DHCP server</span>
+<span class="n">create_ns</span> <span class="n">host3</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">0.3</span><span class="o">/</span><span class="mi">24</span> <span class="c1"># Gateway</span>
+<span class="n">create_ns</span> <span class="n">host4</span> <span class="mi">0</span>              <span class="c1"># normal host</span>
+<span class="n">create_ns</span> <span class="n">host5</span> <span class="mi">0</span>              <span class="c1"># normal host</span>
+</pre></div>
+</div>
+<p>Then create an OpenvSwitch and connect all hosts to it.</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ovs</span><span class="o">-</span><span class="n">vsctl</span> <span class="n">add</span><span class="o">-</span><span class="n">br</span> <span class="n">br0</span> \
+<span class="o">--</span> <span class="nb">set</span> <span class="n">bridge</span> <span class="n">br0</span> <span class="n">other</span><span class="o">-</span><span class="n">config</span><span class="p">:</span><span class="n">datapath</span><span class="o">-</span><span class="nb">id</span><span class="o">=</span><span class="mi">0000000000000001</span> \
+<span class="o">--</span> <span class="nb">set</span> <span class="n">bridge</span> <span class="n">br0</span> <span class="n">other</span><span class="o">-</span><span class="n">config</span><span class="p">:</span><span class="n">disable</span><span class="o">-</span><span class="ow">in</span><span class="o">-</span><span class="n">band</span><span class="o">=</span><span class="n">true</span> \
+<span class="o">--</span> <span class="nb">set</span> <span class="n">bridge</span> <span class="n">br0</span> <span class="n">fail_mode</span><span class="o">=</span><span class="n">secure</span> \
+<span class="o">--</span> <span class="n">add</span><span class="o">-</span><span class="n">port</span> <span class="n">br0</span> <span class="n">veth</span><span class="o">-</span><span class="n">host1</span> <span class="o">--</span> <span class="nb">set</span> <span class="n">interface</span> <span class="n">veth</span><span class="o">-</span><span class="n">host1</span> <span class="n">ofport_request</span><span class="o">=</span><span class="mi">1</span> \
+<span class="o">--</span> <span class="n">add</span><span class="o">-</span><span class="n">port</span> <span class="n">br0</span> <span class="n">veth</span><span class="o">-</span><span class="n">host2</span> <span class="o">--</span> <span class="nb">set</span> <span class="n">interface</span> <span class="n">veth</span><span class="o">-</span><span class="n">host2</span> <span class="n">ofport_request</span><span class="o">=</span><span class="mi">2</span> \
+<span class="o">--</span> <span class="n">add</span><span class="o">-</span><span class="n">port</span> <span class="n">br0</span> <span class="n">veth</span><span class="o">-</span><span class="n">host3</span> <span class="o">--</span> <span class="nb">set</span> <span class="n">interface</span> <span class="n">veth</span><span class="o">-</span><span class="n">host3</span> <span class="n">ofport_request</span><span class="o">=</span><span class="mi">3</span> \
+<span class="o">--</span> <span class="n">add</span><span class="o">-</span><span class="n">port</span> <span class="n">br0</span> <span class="n">veth</span><span class="o">-</span><span class="n">host4</span> <span class="o">--</span> <span class="nb">set</span> <span class="n">interface</span> <span class="n">veth</span><span class="o">-</span><span class="n">host4</span> <span class="n">ofport_request</span><span class="o">=</span><span class="mi">4</span> \
+<span class="o">--</span> <span class="n">add</span><span class="o">-</span><span class="n">port</span> <span class="n">br0</span> <span class="n">veth</span><span class="o">-</span><span class="n">host5</span> <span class="o">--</span> <span class="nb">set</span> <span class="n">interface</span> <span class="n">veth</span><span class="o">-</span><span class="n">host5</span> <span class="n">ofport_request</span><span class="o">=</span><span class="mi">5</span> \
+<span class="o">--</span> <span class="nb">set</span><span class="o">-</span><span class="n">controller</span> <span class="n">br0</span> <span class="n">tcp</span><span class="p">:</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">6653</span> <span class="n">tcp</span><span class="p">:</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">6654</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dhcp-server">
+<h2>DHCP Server<a class="headerlink" href="#dhcp-server" title="Permalink to this headline">¶</a></h2>
+<p>We will run install dnsmasq and run DHCP service on host2</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">dnsmasq</span>
+<span class="n">as_ns</span> <span class="n">host2</span> <span class="n">dnsmasq</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">ping</span> <span class="o">-</span><span class="n">p</span> <span class="mi">0</span> <span class="o">-</span><span class="n">k</span>  \
+    <span class="o">--</span><span class="n">dhcp</span><span class="o">-</span><span class="nb">range</span><span class="o">=</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">0.10</span><span class="p">,</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">0.20</span>  \
+    <span class="o">--</span><span class="n">dhcp</span><span class="o">-</span><span class="n">option</span><span class="o">=</span><span class="n">option</span><span class="p">:</span><span class="n">router</span><span class="p">,</span><span class="mf">192.168</span><span class="o">.</span><span class="mf">0.3</span> <span class="o">-</span><span class="n">O</span> <span class="n">option</span><span class="p">:</span><span class="n">dns</span><span class="o">-</span><span class="n">server</span><span class="p">,</span><span class="mf">8.8</span><span class="o">.</span><span class="mf">8.8</span>  \
+    <span class="o">-</span><span class="n">I</span> <span class="n">lo</span> <span class="o">-</span><span class="n">z</span> <span class="o">-</span><span class="n">l</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">nfv</span><span class="o">-</span><span class="n">dhcp</span><span class="o">.</span><span class="n">leases</span> <span class="o">-</span><span class="mi">8</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">nfv</span><span class="o">.</span><span class="n">dhcp</span><span class="o">.</span><span class="n">log</span> <span class="o">-</span><span class="n">i</span> <span class="n">veth0</span>  <span class="o">--</span><span class="n">conf</span><span class="o">-</span><span class="n">file</span><span class="o">=</span> <span class="o">&amp;</span>
+</pre></div>
+</div>
+<p>Now let’s configure faucet yaml file (/etc/faucet/faucet.yaml)</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">/etc/faucet/faucet.yaml</span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vlans</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">office</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">vid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
+        <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;office</span><span class="nv"> </span><span class="s">network&quot;</span>
+<span class="l l-Scalar l-Scalar-Plain">dps</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">sw1</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">dp_id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0x1</span>
+        <span class="l l-Scalar l-Scalar-Plain">hardware</span><span class="p p-Indicator">:</span> <span class="s">&quot;Open</span><span class="nv"> </span><span class="s">vSwitch&quot;</span>
+        <span class="l l-Scalar l-Scalar-Plain">interfaces</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">1</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host1&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;BRO</span><span class="nv"> </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
+            <span class="l l-Scalar l-Scalar-Plain">2</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host2&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;DHCP</span><span class="nv"> </span><span class="s">server</span><span class="nv">  </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
+            <span class="l l-Scalar l-Scalar-Plain">3</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host3&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;gateway</span><span class="nv"> </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
+            <span class="l l-Scalar l-Scalar-Plain">4</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host4&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;host4</span><span class="nv"> </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
+            <span class="l l-Scalar l-Scalar-Plain">5</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host5&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;host5</span><span class="nv"> </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
+</pre></div>
+</div>
+</div>
+<p>Now restart faucet</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">restart</span> <span class="n">faucet</span>
+</pre></div>
+</div>
+<p>Use dhclient to configure host4 and host4 using DHCP (it may take few seconds).</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">as_ns</span> <span class="n">host4</span> <span class="n">dhclient</span> <span class="n">veth0</span>
+<span class="n">as_ns</span> <span class="n">host5</span> <span class="n">dhclient</span> <span class="n">veth0</span>
+</pre></div>
+</div>
+<p>You can check <em>/tmp/nfv-dhcp.leases</em> and <em>/tmp/nfv.dhcp.log</em> to find what IP address is assigned to host4 and host5.
+Alternatively:</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">as_ns</span> <span class="n">host4</span> <span class="n">ip</span> <span class="n">add</span> <span class="n">show</span>
+<span class="n">as_ns</span> <span class="n">host5</span> <span class="n">ip</span> <span class="n">add</span> <span class="n">show</span>
+</pre></div>
+</div>
+<p>Try to ping between them</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">as_ns</span> <span class="n">host4</span> <span class="n">ping</span> <span class="o">&lt;</span><span class="n">ip</span> <span class="n">of</span> <span class="n">host5</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>It should work fine.</p>
+</div>
+<div class="section" id="gateway-nat">
+<h2>Gateway (NAT)<a class="headerlink" href="#gateway-nat" title="Permalink to this headline">¶</a></h2>
+<p>In this section we will configure host3 as a gateway (NAT) to provide internet connection for our network.</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span>NS=host3        # gateway host namespace
+TO_DEF=to_def   # to the internet
+TO_NS=to_${NS}  # to gw (host3)
+OUT_INTF=enp0s3 # host machine interface for internet connection.
+
+# enable forwarding in the hosted machine and in the host3 namespace.
+sudo sysctl net.ipv4.ip_forward=1
+sudo ip netns exec ${NS} sysctl net.ipv4.ip_forward=1
+
+# create veth pair
+sudo ip link add name ${TO_NS} type veth peer name ${TO_DEF} netns ${NS}
+
+# configure interfaces and routes
+sudo ip addr add 192.168.100.1/30 dev ${TO_NS}
+sudo ip link set ${TO_NS} up
+
+# sudo ip route add 192.168.100.0/30 dev ${TO_NS}
+sudo ip netns exec ${NS} ip addr add 192.168.100.2/30 dev ${TO_DEF}
+sudo ip netns exec ${NS} ip link set ${TO_DEF} up
+sudo ip netns exec ${NS} ip route add default via 192.168.100.1
+
+# NAT in ${NS}
+sudo ip netns exec ${NS} iptables -t nat -F
+sudo ip netns exec ${NS} iptables -t nat -A POSTROUTING -o ${TO_DEF} -j MASQUERADE
+# NAT in default
+sudo iptables -P FORWARD DROP
+sudo iptables -F FORWARD
+
+# Assuming the host does not have other NAT rules.
+sudo iptables -t nat -F
+sudo iptables -t nat -A POSTROUTING -s 192.168.100.0/30 -o ${OUT_INTF} -j MASQUERADE
+sudo iptables -A FORWARD -i ${OUT_INTF} -o ${TO_NS} -j ACCEPT
+sudo iptables -A FORWARD -i ${TO_NS} -o ${OUT_INTF} -j ACCEPT
+</pre></div>
+</div>
+<p>Now try to ping google.com from host4 or host5, it should work as the gateway is now configured.</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">as_ns</span> <span class="n">host4</span> <span class="n">ping</span> <span class="n">www</span><span class="o">.</span><span class="n">google</span><span class="o">.</span><span class="n">com</span>
+<span class="n">as_ns</span> <span class="n">host5</span> <span class="n">ping</span> <span class="n">www</span><span class="o">.</span><span class="n">google</span><span class="o">.</span><span class="n">com</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bro-ids">
+<h2>BRO IDS<a class="headerlink" href="#bro-ids" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="bro-installation">
+<h3>BRO installation<a class="headerlink" href="#bro-installation" title="Permalink to this headline">¶</a></h3>
+<p>We need first to install bro. We will use the binary package version 2.5.3 for this test.</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span># install the prerequisites
+sudo apt-get install cmake make gcc g++ flex bison libpcap-dev libssl-dev python-dev swig zlib1g-dev
+# install the binary package
+wget https://www.bro.org/downloads/bro-2.5.3.tar.gz -P $HOME
+tar -xf bro-2.5.3.tar.gz
+cd bro-2.5.3/
+# configure, make and install
+./configure
+make
+sudo make install
+</pre></div>
+</div>
+<p>Add bro location to the PATH directory and export PREFIX</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span>export PATH=/usr/local/bro/bin:$PATH
+export PREFIX=/usr/local/bro
+</pre></div>
+</div>
+</div>
+<div class="section" id="configure-bro">
+<h3>Configure BRO<a class="headerlink" href="#configure-bro" title="Permalink to this headline">¶</a></h3>
+<p>In $PREFIX/etc/node.cfg, set veth0 as the interface to monitor</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">$PREFIX/etc/node.cfg</span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="highlight-cfg notranslate"><div class="highlight"><pre><span></span><span class="k">[bro]</span>
+<span class="na">type</span><span class="o">=</span><span class="s">standalone</span>
+<span class="na">host</span><span class="o">=</span><span class="s">localhost</span>
+<span class="na">interface</span><span class="o">=</span><span class="s">veth0</span>
+</pre></div>
+</div>
+</div>
+<p>Comment out MailTo in $PREFIX/etc/broctl.cfg</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">$PREFIX/etc/broctl.cfg</span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
+<div class="highlight-cfg notranslate"><div class="highlight"><pre><span></span><span class="c1"># Recipient address for all emails sent out by Bro and BroControl.</span>
+<span class="c1"># MailTo = root@localhost</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-bro-in-host2">
+<h4>Run bro in host2<a class="headerlink" href="#run-bro-in-host2" title="Permalink to this headline">¶</a></h4>
+<p>Since this is the first-time use of the bro command shell application, perform an initial installation of the BroControl configuration:</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">as_ns</span> <span class="n">host1</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bro</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">broctl</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>Then start bro instant</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">as_ns</span> <span class="n">host1</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bro</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">broctl</span> <span class="n">start</span>
+</pre></div>
+</div>
+<p>Check bro status</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">as_ns</span> <span class="n">host1</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bro</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">broctl</span> <span class="n">status</span>
+<span class="n">Name</span>         <span class="n">Type</span>       <span class="n">Host</span>          <span class="n">Status</span>    <span class="n">Pid</span>    <span class="n">Started</span>
+<span class="n">bro</span>          <span class="n">standalone</span> <span class="n">localhost</span>     <span class="n">running</span>   <span class="mi">15052</span>  <span class="mi">07</span> <span class="n">May</span> <span class="mi">09</span><span class="p">:</span><span class="mi">03</span><span class="p">:</span><span class="mi">59</span>
+</pre></div>
+</div>
+<p>Now let’s put BRO in different vlan and mirror the office vlan traffic to BRO.</p>
+<p>We will use vlan acls (more about acl and vlan check vlan and acl tutorials).</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">/etc/faucet/faucet.yaml</span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vlans</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">BROvlan</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">vid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">200</span>
+        <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;bro</span><span class="nv"> </span><span class="s">vlan&quot;</span>
+    <span class="l l-Scalar l-Scalar-Plain">office</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">vid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
+        <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;office</span><span class="nv"> </span><span class="s">network&quot;</span>
+        <span class="l l-Scalar l-Scalar-Plain">acls_in</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">mirror-acl</span><span class="p p-Indicator">]</span>
+<span class="l l-Scalar l-Scalar-Plain">acls</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">mirror-acl</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">rule</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">actions</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">allow</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+                <span class="l l-Scalar l-Scalar-Plain">mirror</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="l l-Scalar l-Scalar-Plain">dps</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">sw1</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">dp_id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0x1</span>
+        <span class="l l-Scalar l-Scalar-Plain">hardware</span><span class="p p-Indicator">:</span> <span class="s">&quot;Open</span><span class="nv"> </span><span class="s">vSwitch&quot;</span>
+        <span class="l l-Scalar l-Scalar-Plain">interfaces</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">1</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host1&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;BRO</span><span class="nv"> </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">BROvlan</span>
+            <span class="l l-Scalar l-Scalar-Plain">2</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host2&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;DHCP</span><span class="nv"> </span><span class="s">server</span><span class="nv">  </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
+            <span class="l l-Scalar l-Scalar-Plain">3</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host3&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;gateway</span><span class="nv"> </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
+            <span class="l l-Scalar l-Scalar-Plain">4</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host4&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;host4</span><span class="nv"> </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
+            <span class="l l-Scalar l-Scalar-Plain">5</span><span class="p p-Indicator">:</span>
+                <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;host5&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;host5</span><span class="nv"> </span><span class="s">network</span><span class="nv"> </span><span class="s">namespace&quot;</span>
+                <span class="l l-Scalar l-Scalar-Plain">native_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">office</span>
+</pre></div>
+</div>
+</div>
+<p>As usual reload faucet configuration file.</p>
+<div class="code console highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">pkill</span> <span class="o">-</span><span class="n">HUP</span> <span class="o">-</span><span class="n">f</span> <span class="s2">&quot;faucet\.faucet&quot;</span>
+</pre></div>
+</div>
+<p>To check BRO log files go to <em>$PREFIX/logs</em>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Faucet Developers.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
