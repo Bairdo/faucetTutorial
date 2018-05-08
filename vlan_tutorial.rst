@@ -80,7 +80,7 @@ Let's start.
 
 Tagged vlan 100
 
-.. code-block:: console
+.. code:: console
 
     create_ns  host3 0
     create_ns  host4 0
@@ -89,14 +89,14 @@ Tagged vlan 100
 
 Native vlan 200
 
-.. code-block:: console
+.. code:: console
 
     create_ns  host5 192.168.2.5/24
     create_ns  host6 192.168.2.6/24
 
 Tagged vlan 300
 
-.. code-block:: console
+.. code:: console
 
     create_ns  host7 0
     create_ns  host8 0
@@ -105,7 +105,7 @@ Tagged vlan 300
 
 Trunk link for host9
 
-.. code-block:: console
+.. code:: console
 
     create_ns  host9 0
     add_tagged_dev_ns host9 192.168.0.9/24 100
@@ -114,7 +114,7 @@ Trunk link for host9
 
 Then  connect all the hosts to the switch (br0)
 
-.. code-block:: console
+.. code:: console
 
     sudo ovs-vsctl add-port br0 veth-host3 -- set interface veth-host3 ofport_request=3 \
     -- add-port br0 veth-host4 -- set interface veth-host4 ofport_request=4 \
@@ -132,7 +132,7 @@ Basic vlan settings
 
 Change /etc/faucet/faucet.yaml to reflect our setting.
 
-.. code-block:: yaml
+.. code:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
@@ -179,7 +179,7 @@ Change /etc/faucet/faucet.yaml to reflect our setting.
 
 Send SIGHUP singnal to reload the configuration file, and check how its log the new configuration in /var/log/faucet/faucet.log
 
-.. code-block:: console
+.. code:: console
 
     sudo pkill -HUP -f "faucet\.faucet"
     cat /var/log/faucet/faucet.log
@@ -188,7 +188,7 @@ Let's do the following simple tests:
 
 1. Ping between hosts in the same vlan
 
-.. code-block:: console
+.. code:: console
 
     as_ns host1 ping 192.168.0.2
     as_ns host3 ping 192.168.0.4
@@ -199,13 +199,13 @@ All should work.
 
 2. Ping between hosts in the same vlan where the port's vlan mode is both native and tagged. In particular between host1 (native vlan100) to host3 (tagged vlan100).
 
-.. code-block:: console
+.. code:: console
 
     as_ns host1 ping 192.168.0.3
 
 3. Ping between hosts in different vlans. Let's change host5 (native vlan200) ip to be 192.168.0.5 and try to ping it from host1 (native vlan100).
 
-.. code-block:: console
+.. code:: console
 
     as_ns host5 ifconfig veth0 192.168.0.5
     as_ns host1 ping 192.168.0.5
@@ -213,13 +213,13 @@ All should work.
 It will not ping as they are in different vlans.
 Let's set host5's IP back.
 
-.. code-block:: console
+.. code:: console
 
     as_ns host5 ifconfig veth0 192.168.2.5
 
 4. Test the trunk link to host9 from different vlans
 
-.. code-block:: console
+.. code:: console
 
     as_ns host1 ping 192.168.0.9
     as_ns host3 ping 192.168.0.9
@@ -236,7 +236,7 @@ Let's apply an ACL on a particular vlan (e.g. vlan300). We will block any ICMP p
 First create an ACL to block the ping.
 Open /etc/faucet/faucet.yaml and add the 'acls' section.
 
-.. code-block:: yaml
+.. code:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     acls:
@@ -254,7 +254,7 @@ Open /etc/faucet/faucet.yaml and add the 'acls' section.
 
 Then apply this on the vlan300.
 
-.. code-block:: yaml
+.. code:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
@@ -270,18 +270,18 @@ Then apply this on the vlan300.
 
 Just before we reload the configuration file. Let's verify that pinging is working between hosts in vlan300.
 
-.. code-block:: console
+.. code:: console
 
     as_ns host7 ping 192.168.3.8
 
 Now let's apply the configuratin, send SIGHUP singnal to reload the configuration file.
 
-.. code-block:: console
+.. code:: console
 
     sudo pkill -HUP -f faucet.faucet
 
 Now if you try to ping from host7 and host8, it will not work as it is specified by their vlan acl.
 
-.. code-block:: console
+.. code:: console
 
     as_ns host7 ping 192.168.3.8

@@ -21,14 +21,14 @@ unless stated tcpdump will be used with ping and it should only be nescassry to 
 
 First we will add two new hosts to our network:
 
-.. code-block:: console
+.. code:: console
 
     create_ns host3 192.168.0.3/24
     create_ns host4 192.168.0.4/24
 
 and connect them to br0
 
-.. code-block:: console
+.. code:: console
 
     sudo ovs-vsctl add-port br0 veth-host3 -- set interface veth-host3 ofport_request=3 \
     -- add-port br0 veth-host4 -- set interface veth-host4 ofport_request=4
@@ -37,7 +37,7 @@ and connect them to br0
 The configurtaion below will block ICMP on traffic coming in on port 3, and allow everything else.
 Add this to /etc/faucet/faucet.yaml below the 'dps'.
 
-.. code-block:: yaml
+.. code:: yaml
     :caption: /etc/faucet/faucet.yaml
 
                 3:
@@ -86,12 +86,12 @@ The 'allow' action is a boolean, if it's True allow the packet to continue throu
 Now tell Faucet to reload its configuration, this can be done be restarting the application.
 But a better way is to send Faucet a SIGHUP signal.
 
-.. code-block:: console
+.. code:: console
 
     check_faucet_config /etc/faucet/faucet.yaml
 
 
-.. code-block:: console
+.. code:: console
 
     pkill -HUP -f faucet.faucet
 
@@ -100,7 +100,7 @@ Now pings to/from host3 should fail, but the other three hosts should be fine.
 
 Test this with
 
-.. code-block:: console
+.. code:: console
 
     as_ns host1 ping 192.168.0.3
     as_ns host1 ping 192.168.0.4
@@ -114,7 +114,7 @@ The mirror action copies the packet, before any modifications, to the specified 
 
 Let's add the mirror action to our block-ping ACL /etc/faucet/faucet.yaml
 
-.. code-block:: yaml
+.. code:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     ...
@@ -142,17 +142,17 @@ And again send the sighup signal to Faucet
 To check this we will ping from host1 to host3, while performing a tcpdump on host4 who should receive the ping replies.
 It is a good idea to run each from a different terminal (screen, tmux, ...)
 
-.. code-block:: console
+.. code:: console
 
     as_ns host1 ping 192.168.0.3
 
 Ping should have 100% packet loss.
 
-.. code-block:: console
+.. code:: console
 
     as_ns host4 tcpdump -e -n -i veth0
 
-.. code-block:: console
+.. code:: console
 
     $ as_ns host4 tcpdump -e -n -i veth0
     tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
@@ -167,7 +167,7 @@ Ping should have 100% packet loss.
 
 There is also the 'output' action which can be used to acheive the same thing.
 
-.. code-block:: yaml
+.. code:: yaml
 
     block-ping:
         - rule:
@@ -192,7 +192,7 @@ It can be used in conjunction with the other actions, e.g. output directly and b
 Let's create a new ACL for host2's port that will change the MAC source address.
 
 
-.. code-block:: yaml
+.. code:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     dps:
@@ -232,7 +232,7 @@ ping host1 from host2
 Here we can see ICMP echo requests are coming from the MAC address "00:00:00:00:00:02" that we set in our output ACL.
 (The reply is destined to the actual MAC address of host2 thanks to ARP) [TODO i think].
 
-.. code-block:: console
+.. code:: console
 
     tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
     listening on veth0, link-type EN10MB (Ethernet), capture size 262144 bytes
@@ -250,7 +250,7 @@ Here we can see ICMP echo requests are coming from the MAC address "00:00:00:00:
 With the output action we could also use it to mirror traffic to a NFV server (like our fake mirror output action above), and use a VLAN tag to identify what port the traffic originated on on the switch.
 To do this we will use both the 'port' & 'vlan_vid' output fields.
 
-.. code-block:: yaml
+.. code:: yaml
     :caption: /etc/faucet/faucet.yaml
 
     block-ping:
