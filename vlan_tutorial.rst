@@ -25,7 +25,7 @@ In this tutorial we will look at how to do the following tasks using Faucet:
 Configuring VLANs:
 ^^^^^^^^^^^^^^^^^^
 
-To demonistrate these tasks we will use a demo network where a single switch br0 connects to:
+To demonstrate these tasks we will use a demo network where a single switch br0 connects to:
 
 - Native vlan100: host1 (192.168.0.1/24), host2 (192.168.0.2/24).
 - Tagged vlan100: host3 (veth0.100: 192.168.0.3/24), host4 (veth0.100: 192.168.0.4/24).
@@ -141,7 +141,7 @@ Then  connect all the hosts to the switch (br0)
     -- add-port br0 veth-host9 -- set interface veth-host9 ofport_request=9
 
 Now we have everything to start working with faucet through its configuration file.
-Each time we need only to change the configuration file and restart faucet (or send it HUP signal to relaod the configuration file).
+Each time we need only to change the configuration file and restart faucet (or send it HUP signal to reload the configuration file).
 
 Basic vlan settings
 -------------------
@@ -193,7 +193,7 @@ Change /etc/faucet/faucet.yaml to reflect our setting.
                     name: "host9"
                     tagged_vlans: [vlan100,vlan200,vlan300]
 
-Send SIGHUP singnal to reload the configuration file, and check how its log the new configuration in /var/log/faucet/faucet.log
+Send SIGHUP signal to reload the configuration file, and check how its log the new configuration in /var/log/faucet/faucet.log
 
 .. code:: console
 
@@ -248,7 +248,7 @@ All of this traffic should go through to host9 as it is connected through the tr
 Vlan ACL
 --------
 
-Let's apply an ACL on a particular vlan (e.g. vlan300). We will block any ICMP packets on Vlan300.
+Let's apply an ACL on a particular vlan (e.g. vlan300). We will block any ICMP packets on vlan300.
 First create an ACL to block the ping.
 Open /etc/faucet/faucet.yaml and add the 'acls' section.
 
@@ -290,7 +290,7 @@ Just before we reload the configuration file. Let's verify that pinging is worki
 
     as_ns host7 ping 192.168.3.8
 
-Now let's apply the configuratin, send SIGHUP singnal to reload the configuration file.
+Now let's apply the configuration, send SIGHUP signal to reload the configuration file.
 
 .. code:: console
 
