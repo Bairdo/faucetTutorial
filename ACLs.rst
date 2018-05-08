@@ -192,7 +192,9 @@ It can be used in conjunction with the other actions, e.g. output directly and b
 Let's create a new ACL for host2's port that will change the MAC source address.
 
 
-.. code:: yaml
+.. code-block:: yaml
+    :caption: /etc/faucet/faucet.yaml
+    :name: new-acl-faucet.yaml
 
     dps:
         sw1:
