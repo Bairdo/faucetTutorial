@@ -178,9 +178,9 @@ So as with inter VLAN routing we will create a router for each switch.
 .. code:: yaml
     :caption: /etc/faucet/faucet.yaml
 
-routers:
-    router-br1:
-        vlans: [br1-hosts, br1-gw]
+    routers:
+        router-br1:
+            vlans: [br1-hosts, br1-gw]
 
 And the rest of the config looks like this:
 
@@ -245,6 +245,7 @@ To install BIRD:
 
 
 Our dataplane will end up looking like this:
+
 .. image:: bgp-dataplane.svg
     :alt: BGP network diagram
 
@@ -319,6 +320,7 @@ Next we will add Faucet to our switch's dataplane so that it can communicate wit
 
 
 To configure BIRD
+
 .. code:: conf
     :caption: /etc/bird.conf
 
