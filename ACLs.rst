@@ -193,7 +193,6 @@ Let's create a new ACL for host2's port that will change the MAC source address.
 
 
 .. code:: yaml
-    :caption: /etc/faucet/faucet.yaml
 
     dps:
         sw1:
