@@ -70,7 +70,8 @@ Network setup
 
 Let’s start. Keep host1, host2 on the native vlan 100 (office vlan) as in the first and second tutorials.
 
-.. note:: To create the hosts and switch again run:
+.. alert:: To create the hosts and switch again run
+
     .. code:: console
 
         cleanup
