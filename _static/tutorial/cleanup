@@ -1,0 +1,9 @@
+cleanup () {
+    for br in $(ovs-vsctl list-br); do
+        ovs-vsctl del-br $br
+    done
+    IFS=$'\n';
+    for i in  $(ip netns list); do
+        echo $i | cut -d ' ' -f1 | xargs ip netns delete ;
+    done
+}
