@@ -7,7 +7,7 @@ NFV services that will be demonstrated in this tutorial are:
 
 - DHCP server
 - NAT Gateway
-- BRO IDS
+- `BRO <https://www.bro.org/>`_ Intrusion Detection System (IDS)
 
 This tutorial demonstrates how the previous topics in this tutorial series can be integrated with other services on our network.
 
@@ -59,7 +59,9 @@ Then create an OpenvSwitch and connect all hosts to it.
 DHCP Server
 ^^^^^^^^^^^
 
-We will run install dnsmasq and run DHCP service on host2
+We will use `dnsmasq <http://www.thekelleys.org.uk/dnsmasq/doc.html>`_ as our DHCP server.
+
+Start dnsmasq on host2:
 
 .. code:: console
 
