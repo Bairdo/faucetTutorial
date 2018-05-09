@@ -44,6 +44,6 @@ To build the html (on ecs machine)
 
 run
 ```bash
-pip3 --user -r requirements.txt
+pip3 install --user -r requirements.txt
 make html
 ```
