@@ -4,6 +4,7 @@ Routing Tutorial
 This tutorial will cover routing with Faucet.
 
 There are three types of routing we can use.
+
 - Inter VLAN routing
 - Static routing
 - BGP via an external application (Quagga, Bird, EXABGP, ...)
@@ -236,7 +237,7 @@ BGP Routing
 
 For this section we are going to change our static routes from above into BGP routes.
 
-BGP (and other routing) is provided by a NFV service, here we will use [BIRD](http://bird.network.cz/).
+BGP (and other routing) is provided by a NFV service, here we will use `BIRD <http://bird.network.cz/>`_.
 Other applications such as ExaBGP & Quagga could be used.
 Faucet imports all routes provided by this NVF service.
 This means we can use our service for other routing protocols (OSPF, RIP, etc) and apply filtering using the service's policy language.
@@ -259,8 +260,7 @@ Our data plane will end up looking like this:
 .. image:: _static/images/bgp-dataplane.svg
     :alt: BGP network diagram
 
-Note 1:
-When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP configuration) the Faucet application must be restarted to reload the configuration correctly (not sighup reloaded).
+.. note:: When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP configuration) the Faucet application must be restarted to reload the configuration correctly (not sighup reloaded).
 
 Remove the static routes added above:
 
