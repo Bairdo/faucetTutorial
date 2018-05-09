@@ -15,13 +15,21 @@ Prerequisites:
 - OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
 - Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_)
 
+Run the cleanup script to remove old namespaces and switches:
+
+.. code:: console
+
+    cleanup
+
 .. note:: For this tutorial it is a good idea to use a terminal multiplexer (screen, tmux or just multiple terminal sessions), as we will be running multiple applications at the same time.
+
+
 
 BGP Routing
 ^^^^^^^^^^^
 
 For this section we are going create two Autonomous Systems (AS).
-Each switch will therefore be controlled by a separate Faucet.
+Each system will contain one switch, and each switch will be controlled by a separate instance of Faucet.
 
 BGP (and other routing) is provided by a NFV service, here we will use `BIRD <http://bird.network.cz/>`_.
 Other applications such as ExaBGP & Quagga could be used.
@@ -34,11 +42,6 @@ To install BIRD:
 
     apt-get install bird
 
-Run the cleanup script to remove old namespaces and switches:
-
-.. code:: console
-
-    cleanup
 
 Network Set-up
 --------------
@@ -84,12 +87,12 @@ Create the 2 bridges and add hosts 1 & 2 to br1 and 3 & 4 to br2
     -- set bridge br2 fail_mode=secure \
     -- add-port br2 veth-host3 -- set interface veth-host3 ofport_request=2 \
     -- add-port br2 veth-host4 -- set interface veth-host4 ofport_request=3 \
-    -- set-controller br2 tcp:127.0.0.1:6653 tcp:127.0.0.1:6654
+    -- set-controller br2 tcp:127.0.0.1:6650 tcp:127.0.0.1:6654
 
 .. note:: When using BGP and Faucet, if changing Faucet's routing configuration (routers, static routes, or a VLAN's BGP config) the Faucet application must be restarted to reload the configuration (not sighup reloaded).
 
 
-First we will remove the routing configuration and separate the two datapath configurations into there own files.
+First we will add the basic vlan and dp configuration for each datapath in their own files.
 They should look like this.
 
 .. code-block:: yaml
@@ -162,20 +165,14 @@ They should look like this.
                     native_vlan: br2-hosts
 
 
-Before we start the Faucets, we will need to change the OpenFlow port for sw2 to the port Faucet2 will be listening on.
-
-.. code:: console
-
-    sudo ovs-vsctl set-controller br2 tcp:127.0.0.1:6650
-
-And stop the system Faucet
+If the system Faucet is running stop it.
 
 .. code:: console
 
     sudo systemctl stop faucet
 
 
-And now we can start the Faucets (**start them in different terminals, we will need to restart them later**).
+Now we can start the Faucets (**start them in different terminals, we will need to restart them later**).
 
 .. code:: console
 

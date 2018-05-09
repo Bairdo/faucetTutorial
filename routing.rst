@@ -94,7 +94,7 @@ Then generate some traffic between our two hosts.
 
 .. code:: console
 
-    as_ns host1 ping 10.0.1.2
+    as_ns host1 ping 10.0.1.4
 
 It should work and traffic should go through.
 
@@ -326,7 +326,7 @@ Next we will add Faucet to our switch's data plane so that it can communicate wi
 
     sudo ip link add veth-faucet0 type veth peer name veth-faucet-dp
     sudo ovs-vsctl add-port br1 veth-faucet-dp -- set interface veth-faucet-dp ofport_request=4
-    sudo ip addr add 10.0.1.2/24 dev veth-faucet0
+    sudo ip addr add 10.0.1.4/24 dev veth-faucet0
     sudo ip link set veth-faucet0 up
     sudo ip link set veth-faucet-dp up
 
@@ -386,7 +386,7 @@ We'll configure Faucet by adding the BGP configuration to the br1-gw VLAN.
             faucet_vips: ["10.0.1.254/24"]
             bgp_port: 9179                          # BGP port for Faucet to listen on.
             bgp_as: 64512                           # Faucet's AS number
-            bgp_routerid: '10.0.1.2'                # Faucet's Unique ID.
+            bgp_routerid: '10.0.1.4'                # Faucet's Unique ID.
             bgp_neighbor_addresses: ['10.0.1.3']    # Neighbouring IP addresses (IPv4/IPv6)
             bgp_connect_mode: active                #
             bgp_neighbor_as: 64513                  # Neighbour's AS number
