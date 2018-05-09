@@ -10,7 +10,7 @@ Prerequisites:
 
 - Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
 - OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
-- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_)
+- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_, `add_tagged_dev_ns <_static/tutorial/add_tagged_dev_ns>`_, `clear_ns <_static/tutorial/clear_ns>`_)
 
 
 In this tutorial we will look at how to do the following tasks using Faucet:
@@ -45,25 +45,16 @@ Here is the structure of the demo setup.
 In addition to the bash scripts in the prerequisite section we will use the following functions:
 
 - to add a tagged network interface to a host namespaces
+
+.. literalinclude:: _static/tutorial/add_tagged_dev_ns
+    :language: bash
+
 - delete hosts
 
-.. code:: bash
+.. literalinclude:: _static/tutorial/clear_ns
+    :language: bash
 
-    add_tagged_dev_ns () {
-         NETNS=$1
-         IP=$2
-         VLAN=$3
-         sudo ip netns exec $NETNS ip link add link veth0 name veth0.${VLAN} type vlan id $VLAN
-         sudo ip netns exec $NETNS ip link set dev veth0.${VLAN} up
-         sudo ip netns exec $NETNS ip addr flush dev veth0
-         sudo ip netns exec $NETNS ip addr add dev veth0.${VLAN}  $IP
-     }
 
-    clear_ns(){
-       NETNS=$1
-       sudo ip netns delete $NETNS
-       sudo ovs-vsctl  del-port br0 veth-${NETNS}
-    }
 
 Network setup
 -------------
