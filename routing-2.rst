@@ -40,12 +40,15 @@ Run the cleanup script to remove old namespaces and switches:
 
     cleanup
 
+Network Set-up
+--------------
+
 Our data plane will end up looking like this:
 
 .. image:: _static/images/routing2-bgp-dataplane.svg
     :alt: BGP network diagram
 
-Create 4 host, in two different subnets:
+Create 4 hosts, in two different subnets:
 
 .. code:: console
 
@@ -406,7 +409,7 @@ and
                 4:
                     native_vlan: br2-peer
 
-Now restart the Faucets.
+Now stop (ctrl + c) and start the Faucets.
 
 .. code:: console
 
@@ -440,7 +443,8 @@ To confirm we are getting the routes from BGP we can query BIRD:
 
 And we can see 10.0.0.0/24 is coming from our fruit peer.
 
-
+Advertise new route
+-------------------
 Next we will move host2 into a different subnet and add a route for it to be advertised via BGP.
 
 Remove the old 10.0.0.0/24 IP address and add the new one.

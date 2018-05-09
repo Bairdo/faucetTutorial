@@ -178,6 +178,13 @@ In this section we will configure host3 as a gateway (NAT) to provide internet c
     sudo iptables -A FORWARD -i ${TO_NS} -o ${OUT_INTF} -j ACCEPT
 
 
+.. note:: To clear the iptables rules run:
+
+    .. code::
+
+        sudo iptables -F
+
+
 Now try to ping google.com from host4 or host5, it should work as the gateway is now configured.
 
 .. code:: console

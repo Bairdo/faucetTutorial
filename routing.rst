@@ -178,7 +178,7 @@ Here we have 3 new options:
             routes:
                 - route:
                     ip_dst: "0.0.0.0/24"
-                    ip_gw: '10.0.1.3/24'
+                    ip_gw: '10.0.1.3'
 
 As our routing interface is in a different VLAN, we will want to route between the two VLANs on the switch (br1-hosts & br1-peer).
 So as with inter VLAN routing we will create a router for each switch.
@@ -252,7 +252,7 @@ To install BIRD:
 
 .. code:: console
 
-    apt-get install bird
+    sudo apt-get install bird
 
 
 Our data plane will end up looking like this:
@@ -293,7 +293,6 @@ Remove the static routes added above:
                     name: "host1"
                     description: "host1 network namespace"
                     native_vlan: br1-hosts
-
                 2:
                     name: "host2"
                     description: "host2 network namespace"
@@ -307,7 +306,7 @@ Reload Faucet
 
 .. code:: console
 
-    TODO does sighup work here?
+    sudo pkill -HUP -f "faucet\.faucet"
 
 
 And check that host1 can ping host2 but not the gw.
@@ -325,15 +324,17 @@ Next we will add Faucet to our switch's data plane so that it can communicate wi
 
 .. code:: console
 
-    ip link add veth-faucet0 type veth peer name veth-faucet-dp
-    ovs-vsctl add-port br1 veth-faucet-dp -- set interface veth-faucet-dp ofport_request=4
-    ip addr add 10.0.1.2/24 dev veth-faucet0
+    sudo ip link add veth-faucet0 type veth peer name veth-faucet-dp
+    sudo ovs-vsctl add-port br1 veth-faucet-dp -- set interface veth-faucet-dp ofport_request=4
+    sudo ip addr add 10.0.1.2/24 dev veth-faucet0
+    sudo ip link set veth-faucet0 up
+    sudo ip link set veth-faucet-dp up
 
 
 To configure BIRD
 
 .. code-block:: cfg
-    :caption: /etc/bird.conf
+    :caption: /etc/bird/bird.conf
 
     protocol kernel {
         scan time 60;
@@ -359,10 +360,11 @@ To configure BIRD
         import all;
     }
 
-Start BIRD
+Create the directory for Bird's server control socket and start BIRD:
 
 .. code:: console
 
+    sudo mkdir /run/bird
     as_ns hostgw bird
 
 We'll configure Faucet by adding the BGP configuration to the br1-gw VLAN.
@@ -415,7 +417,7 @@ Now restart Faucet.
     sudo systemctl restart faucet
 
 
-and our logs should show us 'BGP peer router \*** up'.
+and our logs should show us 'BGP peer router ID 10.0.1.3 AS 64513 up'.
 
 .. code-block:: console
     :caption: /var/log/faucet/faucet.log
@@ -423,7 +425,6 @@ and our logs should show us 'BGP peer router \*** up'.
     ...
     May 04 19:17:55 faucet INFO     BGP peer router ID 10.0.1.3 AS 64513 up
     May 04 19:17:55 faucet ERROR    BGP nexthop 10.0.1.254 for prefix 10.0.0.0/24 cannot be us
-    May 04 19:17:55 faucet INFO     BGP add 192.168.1.0/24 nexthop 10.0.1.3
 
 Now we should be able to ping from host1 to hostgw.
 
