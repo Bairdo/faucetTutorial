@@ -331,15 +331,18 @@ Next we will add Faucet to our switch's data plane so that it can communicate wi
     sudo ip link set veth-faucet-dp up
 
 
-We will also add another host connected to hostgw to act as the Internet.
+We will also add another host connected to hostgw to act as the Internet and give it the IP address 1.0.0.1.
 
 .. code:: console
 
     create_ns hostwww 172.16.0.1/24
     as_ns hostwww ip route add default via 172.16.0.2
+    as_ns hostwww ip addr add 1.0.0.1/24 dev veth0
     sudo ip link set veth-hostwww netns hostgw
     as_ns hostgw ip addr add 172.16.0.2/24 dev veth-hostwww
     as_ns hostgw ip link set veth-hostwww up
+    as_ns hostgw ip route replace default via 172.16.0.1
+    as_ns hostgw ip route add 10.0.0.0/24 via 10.0.1.254
 
 
 To configure BIRD
@@ -360,6 +363,7 @@ To configure BIRD
     # TODO is this right?
     protocol static {
         route 172.16.0.0/24 via 172.16.0.2
+        route 1.0.0.0/24 via 172.16.0.2
     }
 
     # Faucet bgp peer config.
@@ -459,6 +463,14 @@ Now we should be able to ping from host1 to hostwww.
     64 bytes from 172.16.0.1: icmp_seq=2 ttl=62 time=0.165 ms
     64 bytes from 172.16.0.1: icmp_seq=3 ttl=62 time=0.058 ms
     64 bytes from 172.16.0.1: icmp_seq=4 ttl=62 time=0.057 ms
+
+.. code:: console
+    as_ns host1 ping 1.0.0.1
+    PING 1.0.0.1 (1.0.0.1) 56(84) bytes of data.
+    64 bytes from 1.0.0.1: icmp_seq=1 ttl=62 time=0.199 ms
+    64 bytes from 1.0.0.1: icmp_seq=2 ttl=62 time=0.053 ms
+    64 bytes from 1.0.0.1: icmp_seq=3 ttl=62 time=0.058 ms
+    64 bytes from 1.0.0.1: icmp_seq=4 ttl=62 time=0.054 ms
 
 
 For more advanced routing including BGP route policy filtering see `routing 2 tutorial <routing-2.html>`_.
