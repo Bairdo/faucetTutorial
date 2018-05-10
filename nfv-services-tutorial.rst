@@ -310,7 +310,7 @@ Comment out MailTo in /etc/bro/broctl.cfg
     # MailTo = root@localhost
 
 Run bro in host2
-++++++++++++++++
+----------------
 
 Since this is the first-time use of the bro command shell application, perform an initial installation of the BroControl configuration:
 
