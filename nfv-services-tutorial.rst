@@ -15,14 +15,10 @@ This tutorial demonstrates how the previous topics in this tutorial series can b
 Prerequisites:
 ^^^^^^^^^^^^^^
 
-- Good understanding of the previous tutorial series topics (`ACLs <ACLs.html>`_, `VLANs <vlan_tutorial.html>`_, `Routing <routing.html>`_)
-- Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
-- OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
-- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_, `add_tagged_dev_ns <_static/tutorial/add_tagged_dev_ns>`_, `clear_ns <_static/tutorial/clear_ns>`_)
-
-
-Network setup
-^^^^^^^^^^^^^
+- A good understanding of the previous tutorial series topics (`ACLs <ACLs.html>`_, `VLANs <vlan_tutorial.html>`_, `Routing <routing.html>`_)
+- Install Faucet - `Package installation steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
+- Install OpenVSwitch - `Connect your first datapath steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
+- Copy to the Terminal Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_, `add_tagged_dev_ns <_static/tutorial/add_tagged_dev_ns>`_, `clear_ns <_static/tutorial/clear_ns>`_). To make these functions persistent between sessions add them to the bottom of your .bashrc and run 'source .bashrc'
 
 Let's start by run the cleanup script to remove old namespaces and switches.
 
@@ -30,15 +26,37 @@ Let's start by run the cleanup script to remove old namespaces and switches.
 
     cleanup
 
-Then we will create a switch with five hosts as following
+Network setup
+^^^^^^^^^^^^^
+
+We will create a switch with seven hosts as following
+
+.. image:: _static/images/NFV-vlanTutorial.png
+    :alt: Demo network setup
+    :align: center
+
 
 .. code:: console
 
-    create_ns host1 192.168.0.1/24 # BRO
-    create_ns host2 192.168.0.2/24 # DHCP server
-    create_ns host3 192.168.0.3/24 # Gateway
-    create_ns host4 0              # normal host
-    create_ns host5 0              # normal host
+    # BRO
+    create_ns host1 192.168.0.1/24
+
+    # DHCP server
+    create_ns host2 0
+    add_tagged_dev_ns host2 192.168.2.2/24 200 # to serve vlan 200
+    add_tagged_dev_ns host2 192.168.3.2/24 300 # to serve vlan 300
+
+    # Gateway
+    create_ns host3 0
+    add_tagged_dev_ns host3 192.168.2.3/24 200 # to serve vlan 200
+    add_tagged_dev_ns host3 192.168.3.3/24 300 # to serve vlan 200
+
+    # vlan 200 hosts
+    create_ns host4 0
+    create_ns host5 0
+    # vlan 300 hosts
+    create_ns host6 0
+    create_ns host7 0
 
 Then create an OpenvSwitch and connect all hosts to it.
 
@@ -53,6 +71,8 @@ Then create an OpenvSwitch and connect all hosts to it.
     -- add-port br0 veth-host3 -- set interface veth-host3 ofport_request=3 \
     -- add-port br0 veth-host4 -- set interface veth-host4 ofport_request=4 \
     -- add-port br0 veth-host5 -- set interface veth-host5 ofport_request=5 \
+    -- add-port br0 veth-host6 -- set interface veth-host6 ofport_request=6 \
+    -- add-port br0 veth-host7 -- set interface veth-host7 ofport_request=7 \
     -- set-controller br0 tcp:127.0.0.1:6653 tcp:127.0.0.1:6654
 
 
@@ -61,15 +81,33 @@ DHCP Server
 
 We will use `dnsmasq <http://www.thekelleys.org.uk/dnsmasq/doc.html>`_ as our DHCP server.
 
-Start dnsmasq on host2:
+First install dnsmasq:
 
 .. code:: console
 
     sudo apt-get install dnsmasq
-    as_ns host2 dnsmasq --no-ping -p 0 -k  \
-        --dhcp-range=192.168.0.10,192.168.0.20  \
-        --dhcp-option=option:router,192.168.0.3 -O option:dns-server,8.8.8.8  \
-        -I lo -z -l /tmp/nfv-dhcp.leases -8 /tmp/nfv.dhcp.log -i veth0  --conf-file= &
+
+Let's run two services one for vlan 200 and another for vlan 300 as following
+
+.. code:: console
+
+    # 192.168.2.0/24 for vlan 200
+    as_ns host2 dnsmasq --no-ping -p 0 -k \
+                        --dhcp-range=192.168.2.10,192.168.2.20 \
+                        --dhcp-sequential-ip \
+                        --dhcp-option=option:router,192.168.2.3 \
+                        -O option:dns-server,8.8.8.8 \
+                        -I lo -z -l /tmp/nfv-dhcp-vlan200.leases \
+                        -8 /tmp/nfv.dhcp-vlan200.log -i veth0.200  --conf-file= &
+
+    # 192.168.3.0/24 for vlan 300
+    as_ns host2 dnsmasq --no-ping -p 0 -k \
+                        --dhcp-range=192.168.3.10,192.168.3.20 \
+                        --dhcp-sequential-ip \
+                        --dhcp-option=option:router,192.168.3.3 \
+                        -O option:dns-server,8.8.8.8 \
+                        -I lo -z -l /tmp/nfv-dhcp-vlan300.leases \
+                        -8 /tmp/nfv.dhcp-vlan300.log -i veth0.300  --conf-file= &
 
 Now let's configure faucet yaml file (/etc/faucet/faucet.yaml)
 
@@ -77,9 +115,15 @@ Now let's configure faucet yaml file (/etc/faucet/faucet.yaml)
     :caption: /etc/faucet/faucet.yaml
 
     vlans:
-        office:
+        bro-vlan:
             vid: 100
-            description: "office network"
+            description: "bro network"
+        vlan200:
+            vid: 200
+            description: "192.168.2.0/24 network"
+        vlan300:
+            vid: 300
+            description: "192.168.3.0/24 network"
     dps:
         sw1:
             dp_id: 0x1
@@ -88,52 +132,88 @@ Now let's configure faucet yaml file (/etc/faucet/faucet.yaml)
                 1:
                     name: "host1"
                     description: "BRO network namespace"
-                    native_vlan: office
+                    native_vlan: bro-vlan
                 2:
                     name: "host2"
                     description: "DHCP server  network namespace"
-                    native_vlan: office
+                    tagged_vlans: [vlan200, vlan300]
                 3:
                     name: "host3"
                     description: "gateway network namespace"
-                    native_vlan: office
+                    tagged_vlans: [vlan200, vlan300]
                 4:
                     name: "host4"
                     description: "host4 network namespace"
-                    native_vlan: office
+                    native_vlan: vlan200
                 5:
                     name: "host5"
                     description: "host5 network namespace"
-                    native_vlan: office
+                    native_vlan: vlan200
+                6:
+                    name: "host6"
+                    description: "host6 network namespace"
+                    native_vlan: vlan300
+                7:
+                    name: "host7"
+                    description: "host7 network namespace"
+                    native_vlan: vlan300
 
-Now restart faucet
+Now reload faucet configuration file.
 
 .. code:: console
 
-    sudo systemctl restart faucet
+    sudo pkill -HUP -f "faucet\.faucet"
 
-Use dhclient to configure host4 and host4 using DHCP (it may take few seconds).
+Use dhclient to configure host4 to host7 using DHCP (it may take a few seconds, but should return when successful).
 
 .. code:: console
 
     as_ns host4 dhclient veth0
     as_ns host5 dhclient veth0
+    as_ns host6 dhclient veth0
+    as_ns host7 dhclient veth0
 
-You can check */tmp/nfv-dhcp.leases* and */tmp/nfv.dhcp.log* to find what IP address is assigned to host4 and host5.
+You can check */tmp/nfv-dhcp<vlanid>.leases* and */tmp/nfv.dhcp<vlanid>.log* to find their IPs.
+e.g. file /tmp/nfv-dhcp-vlan300.leases
+
+.. code-block:: text
+    :caption: output:
+
+    1525938604 7e:bb:f0:46:6a:e8 192.168.3.11 ubuntu *
+    1525938567 76:58:6c:26:78:44 192.168.3.10 * *
+
+
 Alternatively:
 
 .. code:: console
 
-    as_ns host4 ip add show
-    as_ns host5 ip add show
+    as_ns host4 ip addr show
+    as_ns host5 ip addr show
+    as_ns host6 ip addr show
+    as_ns host7 ip addr show
+
+If the hosts have IPs then great our DHCP works,
 
 Try to ping between them
 
 .. code:: console
 
-    as_ns host4 ping <ip of host5>
+    as_ns host4 ping <ip of host5> # both in vlan200 should work
+    as_ns host6 ping <ip of host7> # both in vlan300 should work
+    as_ns host4 ping <ip of host6> # each in different vlan should not work
 
-It should work fine.
+Ping between hosts vlan 200 and vlan 300 works because host3 (gateway) forwards the traffic by default.
+So we will fix this for the next sections by changing iptables on host3 to not route traffic by default.
+
+.. code:: console
+
+    as_ns host3 iptables -P FORWARD DROP
+
+Now the ping should fail
+
+.. code:: console
+
+    as_ns host4 ping <host7 ip addr>
 
 
 Gateway (NAT)
@@ -150,7 +230,7 @@ In this section we will configure host3 as a gateway (NAT) to provide internet c
 
     # enable forwarding in the hosted machine and in the host3 namespace.
     sudo sysctl net.ipv4.ip_forward=1
-    sudo ip netns exec ${NS} sysctl net.ipv4.ip_forward=1
+    as_ns ${NS} sysctl net.ipv4.ip_forward=1
 
     # create veth pair
     sudo ip link add name ${TO_NS} type veth peer name ${TO_DEF} netns ${NS}
@@ -160,13 +240,22 @@ In this section we will configure host3 as a gateway (NAT) to provide internet c
     sudo ip link set ${TO_NS} up
 
     # sudo ip route add 192.168.100.0/30 dev ${TO_NS}
-    sudo ip netns exec ${NS} ip addr add 192.168.100.2/30 dev ${TO_DEF}
-    sudo ip netns exec ${NS} ip link set ${TO_DEF} up
-    sudo ip netns exec ${NS} ip route add default via 192.168.100.1
+    as_ns ${NS} ip addr add 192.168.100.2/30 dev ${TO_DEF}
+    as_ns ${NS} ip link set ${TO_DEF} up
+    as_ns ${NS} ip route add default via 192.168.100.1
+
+    # do not allow routing between vlan300 & vlan200 on the gateway host.
+    as_ns ${NS} iptables -P FORWARD DROP
+
+    # allow each vlan to be sent to and from the gateway interface
+    as_ns ${NS} iptables -A FORWARD -i veth0.200 -o ${TO_DEF} -j ACCEPT
+    as_ns ${NS} iptables -A FORWARD -i veth0.300 -o ${TO_DEF} -j ACCEPT
+    as_ns ${NS} iptables -A FORWARD -i ${TO_DEF} -o veth0.200 -j ACCEPT
+    as_ns ${NS} iptables -A FORWARD -i ${TO_DEF} -o veth0.300 -j ACCEPT
 
     # NAT in ${NS}
-    sudo ip netns exec ${NS} iptables -t nat -F
-    sudo ip netns exec ${NS} iptables -t nat -A POSTROUTING -o ${TO_DEF} -j MASQUERADE
+    as_ns ${NS} iptables -t nat -F
+    as_ns ${NS} iptables -t nat -A POSTROUTING -o ${TO_DEF} -j MASQUERADE
     # NAT in default
     sudo iptables -P FORWARD DROP
     sudo iptables -F FORWARD
@@ -178,19 +267,12 @@ In this section we will configure host3 as a gateway (NAT) to provide internet c
     sudo iptables -A FORWARD -i ${TO_NS} -o ${OUT_INTF} -j ACCEPT
 
 
-.. note:: To clear the iptables rules run:
-
-    .. code::
-
-        sudo iptables -F
-
-
-Now try to ping google.com from host4 or host5, it should work as the gateway is now configured.
+Now try to ping google.com from any host, it should work as the gateway and DNS is now configured.
 
 .. code:: console
 
     as_ns host4 ping www.google.com
-    as_ns host5 ping www.google.com
+    as_ns host7 ping www.google.com
 
 
 BRO IDS
@@ -203,7 +285,7 @@ We need first to install bro. We will use the binary package version 2.5.3 for t
 
 .. code:: console
 
-    sudp apt-get install bro broctl
+    sudo apt-get install bro broctl
 
 
 Configure BRO
@@ -228,7 +310,7 @@ Comment out MailTo in /etc/bro/broctl.cfg
     # MailTo = root@localhost
 
 Run bro in host2
-++++++++++++++++
+----------------
 
 Since this is the first-time use of the bro command shell application, perform an initial installation of the BroControl configuration:
 
@@ -252,27 +334,31 @@ Check bro status
     bro          standalone localhost     running   15052  07 May 09:03:59
 
 
-Now let's put BRO in different vlan and mirror the office vlan traffic to BRO.
+Now let's add a mirror ACL so all vlan200 & vlan300 traffic is sent to BRO.
 
 We will use vlan acls (more about acl and vlan check vlan and acl tutorials).
 
 .. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml
 
-    vlans:
-        BROvlan:
-            vid: 200
-            description: "bro vlan"
-        office:
-            vid: 100
-            description: "office network"
-            acls_in: [mirror-acl]
     acls:
         mirror-acl:
             - rule:
                 actions:
                     allow: true
                     mirror: 1
+    vlans:
+        bro-vlan:
+            vid: 100
+            description: "bro network"
+        vlan200:
+            vid: 200
+            description: "192.168.2.0/24 network"
+            acls_in: [mirror-acl]
+        vlan300:
+            vid: 300
+            description: "192.168.3.0/24 network"
+            acls_in: [mirror-acl]
     dps:
         sw1:
             dp_id: 0x1
@@ -281,23 +367,31 @@ We will use vlan acls (more about acl and vlan check vlan and acl tutorials).
                 1:
                     name: "host1"
                     description: "BRO network namespace"
-                    native_vlan: BROvlan
+                    native_vlan: bro-vlan
                 2:
                     name: "host2"
                     description: "DHCP server  network namespace"
-                    native_vlan: office
+                    tagged_vlans: [vlan200, vlan300]
                 3:
                     name: "host3"
                     description: "gateway network namespace"
-                    native_vlan: office
+                    tagged_vlans: [vlan200, vlan300]
                 4:
                     name: "host4"
                     description: "host4 network namespace"
-                    native_vlan: office
+                    native_vlan: vlan200
                 5:
                     name: "host5"
                     description: "host5 network namespace"
-                    native_vlan: office
+                    native_vlan: vlan200
+                6:
+                    name: "host6"
+                    description: "host6 network namespace"
+                    native_vlan: vlan300
+                7:
+                    name: "host7"
+                    description: "host7 network namespace"
+                    native_vlan: vlan300
 
 As usual reload faucet configuration file.
 
@@ -305,4 +399,30 @@ As usual reload faucet configuration file.
 
     sudo pkill -HUP -f "faucet\.faucet"
 
-To check BRO log files go to */var/log/bro/current/*.
+
+If we generate some DHCP traffic on either of the hosts VLANs
+
+.. code:: console
+
+    as_ns host4 dhclient veth0
+
+and then inspect the bro logs, we should see that bro has learnt about the two DHCP Servers.
+If the file does not exist check that faucet has successfully reloaded, and try the dhclient command again.
+
+.. code::
+
+    sudo cat /var/log/bro/current/known_services.log
+
+.. code-block:: text
+    :caption: output:
+
+    #separator \x09
+    #set_separator  ,
+    #empty_field    (empty)
+    #unset_field    -
+    #path   known_services
+    #open   2018-05-10-12-09-05
+    #fields ts      host    port_num        port_proto      service
+    #types  time    addr    port    enum    set[string]
+    1525910945.405356       192.168.3.2     67      udp     DHCP
+    1525910975.329404       192.168.2.2     67      udp     DHCP
