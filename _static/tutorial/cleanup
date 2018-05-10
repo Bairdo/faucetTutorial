@@ -4,6 +4,10 @@ cleanup () {
     done
     IFS=$'\n';
     for i in  $(sudo ip netns list); do
-        echo $i | cut -d ' ' -f1 | xargs sudo ip netns delete ;
+
+        NS=$(echo $i | cut -d ' ' -f1)
+        sudo ip netns delete $NS;
+        # Sometimes the veth-$NS is not deleted.
+        sudo ip link delete veth-$NS;
     done
 }

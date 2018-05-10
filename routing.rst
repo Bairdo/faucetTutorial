@@ -331,6 +331,17 @@ Next we will add Faucet to our switch's data plane so that it can communicate wi
     sudo ip link set veth-faucet-dp up
 
 
+We will also add another host connected to hostgw to act as the Internet.
+
+.. code:: console
+
+    create_ns hostwww 172.16.0.1/24
+    as_ns hostwww ip route add default via 172.16.0.2
+    sudo ip link set veth-hostwww netns hostgw
+    as_ns hostgw ip addr add 172.16.0.2/24 dev veth-hostwww
+    as_ns hostgw ip link set veth-hostwww up
+
+
 To configure BIRD
 
 .. code-block:: cfg
@@ -348,7 +359,7 @@ To configure BIRD
     # Local
     # TODO is this right?
     protocol static {
-        route 10.0.0.0/24 via 10.0.1.254;
+        route 172.16.0.0/24 via 172.16.0.2
     }
 
     # Faucet bgp peer config.
@@ -358,6 +369,7 @@ To configure BIRD
         neighbor 10.0.1.4 port 9179 as 64512;
         export all;
         import all;
+        next hop self;
     }
 
 Create the directory for Bird's server control socket and start BIRD:
@@ -417,22 +429,36 @@ Now restart Faucet.
     sudo systemctl restart faucet
 
 
-and our logs should show us 'BGP peer router ID 10.0.1.3 AS 64513 up'.
+and our logs should show us 'BGP peer router ID 10.0.1.3 AS 64513 up' & 'BGP add 172.16.0.0/24 nexthop 10.0.1.3' which is our route advertised via BGP.
 
 .. code-block:: console
     :caption: /var/log/faucet/faucet.log
 
-    ...
-    May 04 19:17:55 faucet INFO     BGP peer router ID 10.0.1.3 AS 64513 up
-    May 04 19:17:55 faucet ERROR    BGP nexthop 10.0.1.254 for prefix 10.0.0.0/24 cannot be us
+    May 10 13:42:54 faucet INFO     Reloading configuration
+    May 10 13:42:54 faucet INFO     configuration /etc/faucet/faucet.yaml changed, analyzing differences
+    May 10 13:42:54 faucet INFO     Add new datapath DPID 1 (0x1)
+    May 10 13:42:55 faucet INFO     BGP peer router ID 10.0.1.3 AS 64513 up
+    May 10 13:42:55 faucet INFO     BGP add 172.16.0.0/24 nexthop 10.0.1.3
+    May 10 13:42:55 faucet.valve INFO     DPID 1 (0x1) Cold start configuring DP
+    May 10 13:42:55 faucet.valve INFO     DPID 1 (0x1) Configuring VLAN br1-gw vid:200 ports:Port 3,Port 4
+    May 10 13:42:55 faucet.valve INFO     DPID 1 (0x1) Configuring VLAN br1-hosts vid:100 ports:Port 1,Port 2
+    May 10 13:42:55 faucet.valve INFO     DPID 1 (0x1) Port 1 configured
+    May 10 13:42:55 faucet.valve INFO     DPID 1 (0x1) Port 2 configured
+    May 10 13:42:55 faucet.valve INFO     DPID 1 (0x1) Port 3 configured
+    May 10 13:42:55 faucet.valve INFO     DPID 1 (0x1) Port 4 configured
+    May 10 13:42:55 faucet.valve INFO     DPID 1 (0x1) Ignoring port:4294967294 not present in configuration file
+    May 10 13:42:56 faucet.valve INFO     DPID 1 (0x1) resolving 10.0.1.3 (2 flows) on VLAN 200
 
-Now we should be able to ping from host1 to hostgw.
+
+Now we should be able to ping from host1 to hostwww.
 
 .. code:: console
 
-    as_ns host1 ping 10.0.1.3
-    PING 10.0.1.3 (10.0.1.3) 56(84) bytes of data.
-    64 bytes from 10.0.1.3: icmp_seq=3 ttl=63 time=0.404 ms
-    64 bytes from 10.0.1.3: icmp_seq=4 ttl=63 time=0.128 ms
+    as_ns host1 ping 172.16.0.1
+    PING 172.16.0.1 (172.16.0.1) 56(84) bytes of data.
+    64 bytes from 172.16.0.1: icmp_seq=2 ttl=62 time=0.165 ms
+    64 bytes from 172.16.0.1: icmp_seq=3 ttl=62 time=0.058 ms
+    64 bytes from 172.16.0.1: icmp_seq=4 ttl=62 time=0.057 ms
+
 
 For more advanced routing including BGP route policy filtering see `routing 2 tutorial <routing-2.html>`_.
