@@ -426,11 +426,15 @@ and our logs should show us BGP peer router up.
 
 Now we should be able to ping from host1 to host3.
 
+.. code:: console
+
+    as_ns host1 ping 10.0.1.3
+
 To confirm we are getting the routes from BGP we can query BIRD:
 
 .. code:: console
 
-    birdcl -s /var/run/bird2.ctl show route
+    birdc -s /var/run/bird2.ctl show route
     BIRD 1.6.4 ready.
     10.0.0.0/24        via 192.168.1.1 on veth0 [fruit 11:38:47 from 192.168.1.3] * (100) [AS64512i]
     10.0.1.0/24        via 192.168.1.2 on veth0 [static1 11:31:29] * (200)
@@ -539,13 +543,13 @@ reload bird:
 
 .. code:: console
 
-    sudo birdcl configure
+    sudo birdc configure
 
 And in bird2 we can view the routing table
 
 .. code:: console
 
-    sudo birdcl -s /var/run/bird2.ctl show route
+    sudo birdc -s /var/run/bird2.ctl show route
     BIRD 1.6.4 ready.
     10.0.2.0/24        via 192.168.1.1 on veth0 [fruit 12:04:36 from 192.168.1.3] * (100) [AS64512i]
     10.0.0.0/24        via 192.168.1.1 on veth0 [fruit 11:38:47 from 192.168.1.3] * (100) [AS64512i]

@@ -12,8 +12,8 @@ There are three types of routing we can use.
 Prerequisites:
 ^^^^^^^^^^^^^^
 
-- Faucet `Package installation steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
-- OpenVSwitch `Connect your first datapath steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
+- Faucet - `Package installation steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
+- OpenVSwitch - `Connect your first datapath steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
 - Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_). To make these functions persistent between sessions add them to the bottom of your .bashrc and run 'source .bashrc'
 
 Run the cleanup script to remove old namespaces and switches:
@@ -33,8 +33,8 @@ Let's start with a single switch connected to two hosts in two different vlans.
 
 .. code:: console
 
-    create_ns host1 10.0.0.254/24
-    create_ns host2 10.0.1.254/24
+    create_ns host1 10.0.0.1/24
+    create_ns host2 10.0.1.2/24
     sudo ovs-vsctl add-br br1 \
     -- set bridge br1 other-config:datapath-id=0000000000000001 \
     -- set bridge br1 other-config:disable-in-band=true \
@@ -94,7 +94,7 @@ Then generate some traffic between our two hosts.
 
 .. code:: console
 
-    as_ns host1 ping 10.0.1.4
+    as_ns host1 ping 10.0.1.2
 
 It should work and traffic should go through.
 
