@@ -10,12 +10,9 @@ ETA: ~25 minutes.
 Prerequisites:
 --------------
 
-- Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
-- OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
-- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_)
-
-
-.. note:: tcpdump is used to capture packets, sometimes it may be nescessary to exit tcpdump (ctrl + c) before packet output is shown. Unless stated tcpdump will be used with ping and it should only be necessary to run both for ~10 seconds.
+- Faucet - `Package installation steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
+- OpenVSwitch - `Connect your first datapath steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
+- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_). To make these functions persistent between sessions add them to the bottom of your .bashrc and run 'source .bashrc'.
 
 
 First we will add two new hosts to our network:
@@ -72,6 +69,7 @@ Again these are applied in order so all of 'block-ping' rules will be higher tha
 Each rule contains two main items 'matches' and 'actions'.
 Matches are any packet field such as MAC/IP/transport source/destination fields.
 For a full list visit https://ryu.readthedocs.io/en/latest/ofproto_v1_3_ref.html#flow-match-structure
+
 Actions are used to control what the packet does, for example normal l2 forwarding ('allow').
 Apply a 'meter' to rate limit traffic, and manipulation of the packet contents and output.
 Full list https://faucet.readthedocs.io/en/latest/configuration.html#id13
@@ -150,11 +148,11 @@ Ping should have 100% packet loss.
 
 .. code:: console
 
-    as_ns host4 tcpdump -e -n -i veth0
+    as_ns host4 tcpdump -l -e -n -i veth0
 
 .. code:: console
 
-    $ as_ns host4 tcpdump -e -n -i veth0
+    $ as_ns host4 tcpdump -l -e -n -i veth0
     tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
     listening on veth0, link-type EN10MB (Ethernet), capture size 262144 bytes
     13:24:36.848331 2e:d4:1a:ca:54:4b > 06:5f:14:fc:47:02, ethertype IPv4 (0x0800), length 98: 192.168.0.3 > 192.168.0.1: ICMP echo reply, id 23660, seq 16, length 64
@@ -222,7 +220,7 @@ Start tcpdump on host1
 
 .. code:: console
 
-    as_ns host1 tcpdump -e -n -i veth0
+    as_ns host1 tcpdump -l -e -n -i veth0
 
 Ping host1 from host2
 
@@ -231,7 +229,7 @@ Ping host1 from host2
     as_ns host2 ping 192.168.0.1
 
 Here we can see ICMP echo requests are coming from the MAC address "00:00:00:00:00:02" that we set in our output ACL.
-(The reply is destined to the actual MAC address of host2 thanks to ARP) [TODO i think].
+(The reply is destined to the actual MAC address of host2 thanks to ARP).
 
 .. code:: console
 
@@ -278,7 +276,7 @@ Ping should still not be allowed through and the tcpdump output should be simila
 
 .. code:: console
 
-    $ as_ns host4 tcpdump -e -n -i veth0
+    $ as_ns host4 tcpdump -l -e -n -i veth0
     tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
     listening on veth0, link-type EN10MB (Ethernet), capture size 262144 bytes
     14:14:15.285329 2e:d4:1a:ca:54:4b > 06:5f:14:fc:47:02, ethertype 802.1Q (0x8100), length 102: vlan 3, p 0, ethertype IPv4, 192.168.0.3 > 192.168.0.1: ICMP echo reply, id 23747, seq 1, length 64

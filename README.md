@@ -33,6 +33,8 @@ THe VM will need to have already installed:
 - Bird
 - screen/tmux
 
+username/password: ubuntu/ubuntu
+
 (user will install faucet & ovs from brad's repo as part of first time tutorial).
 
 Those set up scripts (create_ns, as_ns, clear_ns, cleanup) could be placed in the bashrc.

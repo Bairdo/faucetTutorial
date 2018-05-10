@@ -8,9 +8,9 @@ ETA: ~30 mins.
 Prerequisites:
 ^^^^^^^^^^^^^^
 
-- Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
-- OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
-- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_, `add_tagged_dev_ns <_static/tutorial/add_tagged_dev_ns>`_, `clear_ns <_static/tutorial/clear_ns>`_)
+- Faucet - `Package installation steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
+- OpenVSwitch - `Connect your first datapath steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
+- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_, `add_tagged_dev_ns <_static/tutorial/add_tagged_dev_ns>`_, `clear_ns <_static/tutorial/clear_ns>`_). To make these functions persistent between sessions add them to the bottom of your .bashrc and run 'source .bashrc'
 
 
 In this tutorial we will look at how to do the following tasks using Faucet:
@@ -20,7 +20,7 @@ In this tutorial we will look at how to do the following tasks using Faucet:
 - Trunk links.
 - ACL for a particular VLAN.
 
-.. note:: You can find routing between VLANs `here <./routing.html>`_
+.. note:: You can find routing between VLANs `here <./routing.html#routing-between-vlans>`_
 
 Configuring VLANs:
 ^^^^^^^^^^^^^^^^^^
@@ -259,7 +259,7 @@ Open /etc/faucet/faucet.yaml and add the 'acls' section.
                 actions:
                     allow: False
 
-Then apply this on the vlan300.
+Then apply this ACL on vlan300.
 
 .. code-block:: yaml
     :caption: /etc/faucet/faucet.yaml

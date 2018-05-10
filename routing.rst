@@ -12,9 +12,9 @@ There are three types of routing we can use.
 Prerequisites:
 ^^^^^^^^^^^^^^
 
-- Faucet `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
-- OpenVSwitch `Steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
-- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_)
+- Faucet `Package installation steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#package-installation>`__
+- OpenVSwitch `Connect your first datapath steps 1 & 2 <https://faucet.readthedocs.io/en/latest/tutorials.html#connect-your-first-datapath>`__
+- Useful Bash Functions (`create_ns <_static/tutorial/create_ns>`_, `as_ns <_static/tutorial/as_ns>`_, `cleanup <_static/tutorial/cleanup>`_). To make these functions persistent between sessions add them to the bottom of your .bashrc and run 'source .bashrc'
 
 Run the cleanup script to remove old namespaces and switches:
 
@@ -465,6 +465,7 @@ Now we should be able to ping from host1 to hostwww.
     64 bytes from 172.16.0.1: icmp_seq=4 ttl=62 time=0.057 ms
 
 .. code:: console
+
     as_ns host1 ping 1.0.0.1
     PING 1.0.0.1 (1.0.0.1) 56(84) bytes of data.
     64 bytes from 1.0.0.1: icmp_seq=1 ttl=62 time=0.199 ms
